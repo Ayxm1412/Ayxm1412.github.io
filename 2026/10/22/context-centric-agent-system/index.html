@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ayxm1412.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="这是我 4 月份的一份随笔，最近细读 deepseek harness 的代码的时候，发现想法不谋而合，也放在博客里吧。 CONTEXT-CENTRIC AGENT SYSTEM: RETHINKING AGENT ARCHITECTURE FROM OS DESIGN PHILOSOPHY  图 1：上为 Agent-Centric 的中心辐射结构，下为 Context-Centric 的分层流">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Context-Centric Agent System：从操作系统设计哲学重新思考 Agent 架构">
+<meta property="og:url" content="https://ayxm1412.github.io/2026/10/22/context-centric-agent-system/index.html">
+<meta property="og:site_name" content="Ayxm的博客">
+<meta property="og:description" content="这是我 4 月份的一份随笔，最近细读 deepseek harness 的代码的时候，发现想法不谋而合，也放在博客里吧。 CONTEXT-CENTRIC AGENT SYSTEM: RETHINKING AGENT ARCHITECTURE FROM OS DESIGN PHILOSOPHY  图 1：上为 Agent-Centric 的中心辐射结构，下为 Context-Centric 的分层流">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ayxm1412.github.io/images/context-centric/context-centric-vs-agent-centric.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/context-centric/context-centric-architecture.svg">
+<meta property="article:published_time" content="2026-10-21T16:30:00.000Z">
+<meta property="article:modified_time" content="2026-10-21T17:28:38.878Z">
+<meta property="article:author" content="Ayxm">
+<meta property="article:tag" content="DeepSeek Harness">
+<meta property="article:tag" content="Agent 架构">
+<meta property="article:tag" content="操作系统">
+<meta property="article:tag" content="Context Engineering">
+<meta property="article:tag" content="范式对比">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ayxm1412.github.io/images/context-centric/context-centric-vs-agent-centric.svg">
+
+
+<link rel="canonical" href="https://ayxm1412.github.io/2026/10/22/context-centric-agent-system/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ayxm1412.github.io/2026/10/22/context-centric-agent-system/","path":"2026/10/22/context-centric-agent-system/","title":"Context-Centric Agent System：从操作系统设计哲学重新思考 Agent 架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Context-Centric Agent System：从操作系统设计哲学重新思考 Agent 架构 | Ayxm的博客</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Ayxm的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录 · 思考 · 分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Agent-Centric%EF%BC%9A%E7%8E%B0%E7%8A%B6%E4%B8%8E%E5%B1%80%E9%99%90"><span class="nav-text">一、Agent-Centric：现状与局限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Context-Centric%EF%BC%9A%E4%B8%80%E7%A7%8D%E6%9B%BF%E4%BB%A3%E8%8C%83%E5%BC%8F"><span class="nav-text">二、Context-Centric：一种替代范式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%9E%B6%E6%9E%84%E7%9A%84%E7%B1%BB%E6%AF%94"><span class="nav-text">三、计算机架构的类比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Context-Bus%EF%BC%9A%E8%AE%A9%E9%9D%9E%E8%AF%AD%E4%B9%89%E6%95%B0%E6%8D%AE%E7%BB%95%E8%BF%87-Agent"><span class="nav-text">四、Context Bus：让非语义数据绕过 Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81Self-Improving%EF%BC%9A%E5%BD%93%E6%89%A7%E8%A1%8C%E4%BA%A7%E5%87%BA%E5%8F%98%E6%88%90%E6%96%B0%E7%9A%84%E6%8C%87%E4%BB%A4"><span class="nav-text">五、Self-Improving：当执行产出变成新的指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AE%9E%E8%AF%81%E6%A3%80%E9%AA%8C%EF%BC%9AClaude-Code%E3%80%81OpenClaw-%E4%B8%8E-Hermes-%E7%9A%84%E5%90%AF%E7%A4%BA"><span class="nav-text">六、实证检验：Claude Code、OpenClaw 与 Hermes 的启示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E9%9D%A2%E5%90%91%E7%94%A8%E6%88%B7%E7%9A%84%E7%AC%AC%E4%B8%80%E6%80%A7%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-text">七、面向用户的第一性原理分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E4%BB%8E-OS-%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E7%9C%8B%E6%9C%AA%E6%9D%A5%E6%96%B9%E5%90%91"><span class="nav-text">八、从 OS 设计哲学看未来方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81Context-Centric-%E7%9A%84%E6%8C%91%E6%88%98%E4%B8%8E%E5%BC%80%E6%94%BE%E9%97%AE%E9%A2%98"><span class="nav-text">九、Context-Centric 的挑战与开放问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E7%BB%93%E8%AE%BA%EF%BC%9A%E4%BB%8E-Agent-Engineering-%E5%88%B0-Context-Engineering"><span class="nav-text">十、结论：从 Agent Engineering 到 Context Engineering</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%BD%95%EF%BC%9A%E5%85%A8%E6%99%AF%E6%80%BB%E8%A7%88"><span class="nav-text">附录：全景总览</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ayxm"
+      src="https://github.com/Ayxm1412.png">
+  <p class="site-author-name" itemprop="name">Ayxm</p>
+  <div class="site-description" itemprop="description">Ayxm 的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Ayxm1412" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Ayxm1412" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ayxm1412.github.io/2026/10/22/context-centric-agent-system/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/Ayxm1412.png">
+      <meta itemprop="name" content="Ayxm">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ayxm的博客">
+      <meta itemprop="description" content="Ayxm 的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Context-Centric Agent System：从操作系统设计哲学重新思考 Agent 架构 | Ayxm的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Context-Centric Agent System：从操作系统设计哲学重新思考 Agent 架构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-10-22 00:30:00 / 修改时间：01:28:38" itemprop="dateCreated datePublished" datetime="2026-10-22T00:30:00+08:00">2026-10-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这是我 4 月份的一份随笔，最近细读 deepseek harness 的代码的时候，发现想法不谋而合，也放在博客里吧。</p>
+<p><em>CONTEXT-CENTRIC AGENT SYSTEM: RETHINKING AGENT ARCHITECTURE FROM OS DESIGN PHILOSOPHY</em></p>
+<p><img src="/images/context-centric/context-centric-vs-agent-centric.svg" alt="Context-Centric 与 Agent-Centric 架构对比总览"></p>
+<p><em>图 1：上为 Agent-Centric 的中心辐射结构，下为 Context-Centric 的分层流水线（Input → Router → ISA → CPU → Bus → I&#x2F;O → Output → Evolve）。蓝框为可替换的处理器，虚线框为运行期能力。</em></p>
+<span id="more"></span>
+
+<p>当我们谈论 AI Agent 系统时，几乎所有的架构讨论都默认以 Agent 为中心——Agent 感知环境、做出推理、选择工具、获取反馈、再推理。这个被称为 Agent Loop 的模式，已经成为 LangChain、CrewAI、AutoGen 等主流框架的核心范式。</p>
+<p>但如果我们退后一步，从操作系统设计的视角重新审视这个问题，会发现一个被忽视的根本性假设：<strong>为什么 Agent 必须在中心？</strong></p>
+<p>本文提出一种替代范式——<strong>Context-Centric Agent System（以 Context 为中心的 Agent 系统）</strong>，并从操作系统的设计哲学出发，论证这种范式为何更符合未来 Agent 系统的演进方向。</p>
+<h2 id="一、Agent-Centric：现状与局限"><a href="#一、Agent-Centric：现状与局限" class="headerlink" title="一、Agent-Centric：现状与局限"></a>一、Agent-Centric：现状与局限</h2><p>当前主流的 Agent-Centric 架构本质上是一个<strong>主体决策循环（Subject Decision Loop）</strong>：</p>
+<blockquote>
+<p>Agent 接收输入 → 推理 → 决定调用哪个工具 → 获取结果 → 再推理 → 输出</p>
+</blockquote>
+<p>这个模式直觉上很自然，因为它模拟了人类的认知模型——有一个”我”在思考和行动。Agent 是系统的大脑和心脏，context、tool、memory 都是围绕它的从属组件。</p>
+<p>这种设计在早期阶段是合理的。当 LLM 能力有限、场景简单时，一个”聪明的中心”足以协调一切。但随着系统复杂度的增长，它的结构性缺陷逐渐暴露：</p>
+<p><strong>Context 管理是真正的瓶颈。</strong> 在实际生产环境中，Agent 系统的失败原因大多不是”推理不够好”，而是 context 管理出了问题——关键信息丢失、无关信息堆积、上下文窗口溢出。Context 在 Agent-Centric 架构中只是一个”传入参数”，没有自己的生命周期管理。</p>
+<p><strong>模型替换代价极高。</strong> 整个系统的 prompt engineering、行为预期、错误处理都是围绕特定模型的特性构建的。更换模型（比如从 GPT-4 切到 Claude）往往需要大量的 prompt 重写和行为调优，因为系统与特定 Agent 的实现深度耦合。</p>
+<p><strong>Multi-Agent 协作困难。</strong> 当多个 Agent 需要协作时，Agent-Centric 架构的协作方式是”消息传递”——Agent 之间互相喊话。这种模式难以扩展，信息同步成本高，且缺乏结构化的协作机制。</p>
+<p><strong>单点失败风险。</strong> Agent 是唯一的决策中心，一旦推理出错（hallucination、逻辑错误、工具选择失误），整个链路崩溃，没有自然的容错和重路由机制。</p>
+<h2 id="二、Context-Centric：一种替代范式"><a href="#二、Context-Centric：一种替代范式" class="headerlink" title="二、Context-Centric：一种替代范式"></a>二、Context-Centric：一种替代范式</h2><p>Context-Centric Agent System 的核心思想很简单：<strong>把 Context 放在系统的中心，把 Agent 降级为 Context 的处理器。</strong></p>
+<p>这个想法并非凭空而来。在经典 AI 中，有一个被称为 <strong>Blackboard Architecture（黑板架构）</strong> 的先驱范式（Nii, 1986）。在黑板架构中，有一个共享的中央数据结构（blackboard），多个 Knowledge Source 围绕它读写操作，而一个控制组件决定何时激活哪个 Knowledge Source。Blackboard 就是我们所说的 Context，Knowledge Source 就是 Agent。Context-Centric 可以看作是黑板架构在 LLM 时代的重新诠释——继承其”数据为中心”的哲学，但利用大语言模型作为通用处理器来替代传统的规则引擎。</p>
+<p>在这种架构中，Context 不再是被动的传入参数，而是一个有结构、可版本化、可路由的一等实体（First-Class Entity）。它拥有自己的生命周期——被创建、被丰富、被压缩、被分发、被归档。而 Agent 简化为 Context 流水线上的一个处理环节：接收 context，执行转换，输出更新后的 context。</p>
+<p>这种设计的关键转变在于：<strong>控制流从”Agent 决定做什么”变为”Context 的状态决定它流向哪里”。</strong> 一个轻量级的 Context Router 根据 context 的类型、状态、优先级，将其分发到合适的 Agent 处理。Agent 不需要理解全局任务，只需要忠实地完成自己负责的 context 转换。</p>
+<p>用一个直观的对比：</p>
+<p>Agent-Centric 像是一个全能项目经理，所有信息汇报给他，他做出所有决策，分配所有任务。这在小团队很高效，但在大组织中会成为瓶颈。</p>
+<p>Context-Centric 像是一条装配流水线。工件（Context）沿着产线流动，每个工位（Agent）完成自己的工序。流水线的效率取决于工件的路由和调度，而不是某一个工位有多聪明。</p>
+<h2 id="三、计算机架构的类比"><a href="#三、计算机架构的类比" class="headerlink" title="三、计算机架构的类比"></a>三、计算机架构的类比</h2><p>这种范式转换，在计算机架构的演进中有一个精确的类比。</p>
+<p><strong>Context 是文件系统（File System）。</strong> 它是系统需要处理的”工作负载”。文件有格式、有元数据、有存储位置、有访问权限、有版本历史。同样，Context 也应该有结构定义（schema）、有元信息（来源、优先级、过期时间）、有版本控制、有访问控制。</p>
+<p><strong>Agent 是 CPU。</strong> 它是通用的处理单元，与具体任务无关。CPU 不关心自己处理的是数据库查询还是视频渲染，Agent 也不应该关心自己处理的是客服对话还是代码审查——它只需要实现标准化的处理接口。更关键的是，CPU 的升级对上层软件是透明的。你把 Intel 第 12 代换成第 14 代，操作系统和应用不需要任何修改。Agent 的替换也应该如此——换一个更强的模型，系统层面的代码一行不改。</p>
+<p>但这个类比需要一个重要的限定：<strong>CPU 是确定性的，LLM 是概率性的。</strong> 同一条 x86 指令在任何兼容 CPU 上的执行结果完全一致；但同一个 Skill 调用在不同 LLM 上的输出可能有显著差异——不仅是质量差异，甚至是行为模式的差异。这意味着 Agent 的”可替换性”不会像换 CPU 那样无缝，更接近于同一 ISA 下不同微架构的差异：接口兼容但性能特征不同，某些边界场景下行为可能不一致。系统设计时必须为这种”概率性兼容”留出容错空间，比如输出校验、行为回归测试、质量基线门槛。</p>
+<p><strong>Skill 是指令集架构（ISA, Instruction Set Architecture）。</strong> ISA 是 CPU 与软件之间的契约层：向上对软件承诺”你可以用这些操作”，向下对硬件说”你必须实现这些操作”。Skill 在 Context-Centric 系统中扮演类似的角色——定义标准化的能力接口（summarize、generate、analyze、extract），不管底层是哪个模型，只要它实现了这套 Skill 接口，就可以接入系统。</p>
+<p>但这里有一个本质差异必须诚实面对：<strong>ISA 是精确的二进制契约，Skill 是模糊的能力承诺。</strong> <code>ADD EAX, EBX</code> 的语义在任何 x86 CPU 上毫无歧义；但 <code>Skill:Summarize</code> 的输出质量、风格、甚至对”摘要”的理解，在不同模型间差异巨大。这意味着 Skill 层的”契约”更接近于 API 的语义版本控制（Semantic Versioning）而非硬件 ISA 的位级精确——它需要包含质量基线定义、输入输出 schema 约束、以及行为测试套件来保证兼容性。Skill 的标准化是这套架构能否落地的关键技术瓶颈。</p>
+<p>ISA 的演进方式仍然适用于 Skill 的能力扩展：x86 从基础指令集逐步扩展出 SSE、AVX 等扩展指令集来处理新场景；Skill 同样可以从基础能力（文本理解、生成）逐步扩展领域 Skill（PDF 处理、代码审查、数据分析），形成可扩展的能力分层。</p>
+<p><strong>Tool 是 I&#x2F;O 设备。</strong> 搜索引擎、数据库、API——这些不是 Agent 的内在能力，而是通过标准总线协议（Tool Schema）访问的外部资源。操作系统通过设备驱动（Tool Adapter）让 CPU 统一访问各种外设，Context-Centric 系统也应该通过统一的 Tool 接口层让 Agent 访问外部服务。</p>
+<p><strong>Context Window 管理是虚拟内存（Virtual Memory）。</strong> 当前大多数 Agent 系统对 context window 的管理，相当于早期计算机没有虚拟内存的状态——所有东西直接加载到物理内存，满了就崩。成熟的做法应该像虚拟内存一样：context 按需分页加载（page in），不活跃的 context 换出到外部存储（page out）。虚拟内存最关键的特性是<strong>对进程透明</strong>——进程不知道自己的哪些页面在物理内存、哪些在磁盘上。现在的 RAG 本质上是一种”检索式加载”机制，但它不具备虚拟内存的透明性——Agent 通常能感知到 RAG 的存在（需要主动触发检索查询），这更接近于早期的覆盖技术（overlay）而非真正的虚拟内存。一个真正的 context 虚拟化层应该让 Agent 像访问”无限 context window”一样工作，所有的分页调度对 Agent 完全不可见。</p>
+<p><strong>Context 亲近度是缓存层级（Cache Hierarchy）。</strong> L1 Cache 是当前 prompt 中的内容，访问延迟最低但容量最小；L2 Cache 是同一 session 的历史对话；L3 Cache 是持久化的知识库；Disk 是外部数据源。好的系统应该有一个 Context Cache Hierarchy，自动管理什么信息放在哪一层、什么时候预取、什么时候淘汰。值得注意的是，CPU 缓存系统中最棘手的问题之一是<strong>缓存一致性（cache coherence）</strong>——当多个核心缓存了同一数据的不同副本时，如何保证一致？Context Cache Hierarchy 同样面临这个问题：当 L3（知识库）更新了，但 L2（会话历史）仍引用旧版本信息时，系统需要一个一致性协议来检测和处理冲突。这个问题在当前讨论中被低估了。</p>
+<p><strong>Context Router 是进程调度器（Process Scheduler）。</strong> 操作系统的调度器是一个轻量、明确的组件——它不是另一个应用程序，只做一件事：决定哪个进程下一个上 CPU。Context Router 也应该如此：一个薄层，根据 context 的类型和状态，决定它该被哪个 Agent 处理。</p>
+<p><strong>Context Pipe 是 Unix 管道（Pipe）。</strong> Unix 的哲学是”每个程序做好一件事，通过管道组合”。<code>cat file | grep pattern | sort | uniq</code>——每个命令是一个专注的文本处理器，通过标准化的 stdin&#x2F;stdout 接口串联。Context-Centric 系统也应该这样：每个 Agent 是一个专注的 Context Transformer，通过标准化的 Context 接口串联，实现管道式组合。</p>
+<p>完整的映射关系如下：</p>
+<table>
+<thead>
+<tr>
+<th>OS Concept</th>
+<th>Agent System 映射</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>File System</td>
+<td>Context Management</td>
+<td>核心基础设施</td>
+</tr>
+<tr>
+<td>CPU</td>
+<td>Agent &#x2F; LLM</td>
+<td>可替换的处理器</td>
+</tr>
+<tr>
+<td>ISA</td>
+<td>Skill Interface</td>
+<td>能力契约层</td>
+</tr>
+<tr>
+<td>Virtual Memory</td>
+<td>Context Window Mgmt</td>
+<td>透明的按需加载</td>
+</tr>
+<tr>
+<td>Cache Hierarchy</td>
+<td>Context Proximity</td>
+<td>L1 Prompt → L2 Session → L3 KB → Disk</td>
+</tr>
+<tr>
+<td>Process Scheduler</td>
+<td>Context Router</td>
+<td>轻量级分发</td>
+</tr>
+<tr>
+<td>I&#x2F;O Devices</td>
+<td>Tools &#x2F; External Services</td>
+<td>标准总线访问</td>
+</tr>
+<tr>
+<td>Unix Pipe</td>
+<td>Context Pipe</td>
+<td>组合式数据流</td>
+</tr>
+<tr>
+<td>DMA &#x2F; Bus</td>
+<td>Context Bus &#x2F; Index</td>
+<td>非语义数据旁路，Agent 只处理语义</td>
+</tr>
+<tr>
+<td>Software Install</td>
+<td>Self-Improving</td>
+<td>执行产出新 Skill，ISA 自然扩展</td>
+</tr>
+</tbody></table>
+<h2 id="四、Context-Bus：让非语义数据绕过-Agent"><a href="#四、Context-Bus：让非语义数据绕过-Agent" class="headerlink" title="四、Context Bus：让非语义数据绕过 Agent"></a>四、Context Bus：让非语义数据绕过 Agent</h2><p>在搜索推荐（Search &amp; Recommendation）等场景中，有一个长期困扰工程师的问题：召回阶段和排序阶段之间需要传递 itemID、session token、tracking code 等数据。这些数据对流水线的路由和追踪至关重要，但对 LLM 的逻辑推理来说完全无意义——它们是任意编码的标识符，不携带任何语义信息。</p>
+<p>如果把这些 ID 塞进 prompt，强迫 Agent “处理”它们，结果是灾难性的。LLM 会尝试对这些无意义的 token 进行”推理”，导致严重的幻觉：输出的 itemID 可能是编造的、截断的、或者与输入不匹配的。这不是模型的”能力不足”，而是架构设计的错误——你让 CPU 做了 DMA 控制器该做的事。</p>
+<p>在操作系统中，<strong>DMA（Direct Memory Access）</strong> 解决的正是这类问题：大量数据需要在外设和内存之间搬运，但 CPU 不需要理解这些数据的内容。DMA 控制器让数据绕过 CPU 直接传输，CPU 只在传输完成后收到一个中断通知。</p>
+<p>Context-Centric 系统应该有一个对等的机制——<strong>Context Bus</strong>。它的核心设计是将 context 中的数据分为两类：</p>
+<p><strong>语义数据（Semantic Payload）</strong> 需要 Agent 理解和推理的内容——用户意图、文本描述、业务逻辑。这部分进入 Agent 的处理管道。</p>
+<p><strong>引用数据（Reference &#x2F; Pointer）</strong> 不需要 Agent 理解，只需要在流水线各阶段之间精确传递的数据——itemID、文档哈希、会话标识、坐标索引。这部分通过 Context Bus 旁路传输，Agent 只拿到一个轻量级的引用（类似文件描述符 file descriptor），而不是原始数据。</p>
+<p>当 Agent 的推理结果需要关联到具体 item 时，它输出的是语义层面的描述（比如”排名前 3 的结果”），Context Bus 负责将这个语义描述解析为对应的 itemID 引用。这样，Agent 永远不需要”记住”或”复述”那些任意编码的 ID，幻觉问题从架构层面被消除。</p>
+<p>这个模式的适用范围远不止搜推场景。任何涉及”对 Agent 推理无意义但对系统流转必要”的数据——数据库主键、API token、二进制文件句柄、地理坐标编码——都应该走 Context Bus 而不是 Agent 的推理通道。这是一个通用的架构原则：<strong>分离语义通道和数据通道，就像计算机分离控制总线和数据总线一样。</strong></p>
+<h2 id="五、Self-Improving：当执行产出变成新的指令"><a href="#五、Self-Improving：当执行产出变成新的指令" class="headerlink" title="五、Self-Improving：当执行产出变成新的指令"></a>五、Self-Improving：当执行产出变成新的指令</h2><p>Context-Centric 架构的另一个深远优势是它对 <strong>self-improving（自我改进）</strong> 天然友好。</p>
+<p>在 Agent-Centric 系统中，self-improving 是一个棘手的悖论。你要改进的对象——Agent——恰好是系统的控制中心。这就像要求一台正在运行的计算机在不停机的情况下更换自己的 CPU。你可以在 Agent 的 prompt 里加入”反思”环节，但这本质上只是在同一个推理循环里增加了一步，并没有真正扩展系统的能力边界。</p>
+<p>在 Context-Centric 系统中，self-improving 的逻辑截然不同，因为 Skill（ISA）和 Agent（CPU）是解耦的。一次 Agent 执行的输出不仅仅是任务结果，它可以是一个新的 Context，而这个 Context 的内容恰好是一条新的 Skill 定义或一条优化后的 Instruction。</p>
+<p>这意味着系统的能力扩展路径变成了：<strong>执行 → 产出新 context → 新 context 被识别为 skill 定义 → ISA 自然扩展 → 下一次执行使用增强后的 ISA。</strong></p>
+<p>这个过程在操作系统中也有对应的类比，但需要注意差异。用户安装软件是一个<strong>有意为之的人工动作</strong>——用户选择安装什么、确认安装、可以卸载。而 self-improving 的 skill 生成是自动发生的。更准确的类比可能是<strong>包管理器的自动更新加上依赖解析</strong>——系统观察到需求后自动安装新能力，但这同时引入了一个 OS 早就解决过的问题：自动安装的软件需要签名验证、沙箱测试、回滚机制。自动生成的 Skill 也需要类似的质量门控——不经验证就加入 ISA 的 Skill 可能引入”能力退化”，就像未经测试的软件更新可能导致系统不稳定。</p>
+<p>这个类比还可以进一步延伸到 <strong>JIT（Just-In-Time）编译</strong>。JIT 编译器在运行时观察程序的执行模式，动态生成优化后的机器码。Context-Centric 系统也可以有类似的机制：观察某类 context 的反复处理模式，自动生成一条新的 Skill 来加速后续处理。系统在使用中自我进化，而这个进化过程完全发生在 Context 层面，Agent 保持不变。</p>
+<h2 id="六、实证检验：Claude-Code、OpenClaw-与-Hermes-的启示"><a href="#六、实证检验：Claude-Code、OpenClaw-与-Hermes-的启示" class="headerlink" title="六、实证检验：Claude Code、OpenClaw 与 Hermes 的启示"></a>六、实证检验：Claude Code、OpenClaw 与 Hermes 的启示</h2><p>上述分析如果只是纸上推演，说服力有限。我们需要用真实系统来检验：当前最前沿的 agent 系统，到底在 OS 成熟度光谱上走到了哪里？以下基于 Claude Code、OpenClaw 和 Hermes Agent 三个代表性系统的架构分析。</p>
+<p><strong>内存隔离和安全模型——比预期成熟。</strong> Claude Code 的子 agent 有独立的 context window，支持 <code>isolation: worktree</code> 在独立的 git 工作目录中运行，执行结果只以摘要形式返回——这相当于进程间通过消息传递而非共享内存通信。它的权限系统已接近 OS 级别的能力模型：四级配置（Managed → User → Project → Local），支持精确到 <code>Bash(git diff *)</code> 粒度的 allow&#x2F;ask&#x2F;deny 规则，甚至有 OS 级沙箱（macOS Seatbelt &#x2F; Linux bubblewrap）。OpenClaw 更彻底——agent 之间”完全隔离”，跨 agent 通信需显式启用白名单，有三级 kill switch（撤销 JWT → 零速率限制 → 缩容 gateway 到零）。</p>
+<p><strong>进程管理——有进展但远未成熟。</strong> OpenClaw 有两层 FIFO 队列（session 序列化 + 全局并发控制 maxConcurrent&#x3D;4），并且它的 <code>steer</code> 模式可以在运行中注入方向指令。Claude Code 用 git worktree 实现了并行子 agent 的物理隔离。但和 OS 相比，没有系统有优先级调度、时间片轮转或真正的任务挂起&#x2F;恢复。</p>
+<p><strong>中断机制——仍是最大空白。</strong> 三个系统都没有真正的异步中断。OpenClaw 的 <code>steer</code> 只能在 tool call 间隙注入，不能打断推理过程。Hermes 每 15 次 tool call 的自评估检查点是内部轮询而非外部中断。Claude Code 只有手动 <code>/stop</code>。用户无法在 agent 走错路时实时纠偏——只能等待或终止。</p>
+<p><strong>持久化与 Self-Improving——Hermes 是先行者。</strong> Hermes 的三层记忆（session &#x2F; persistent &#x2F; user model）加 FTS5 全文搜索索引是三个系统中最结构化的。它的 closed learning loop（执行 → 自评估 → 创建 skill → 更新记忆）直接验证了我们”执行产出变成新 ISA 指令”的论点——skill 以 Markdown 文件存储在 <code>~/.hermes/skills/</code>，遵循 agentskills.io 标准。经过 20-30 个复杂任务后，同类任务的 tool call 从 25 次降到 8-10 次。但随着 skill 库增长 token 消耗增加，Hermes 用”progressive disclosure”（先加载摘要再按需展开）来解决——这本质上就是我们说的 context cache hierarchy。</p>
+<p><strong>IPC 和可观测性——仍然原始。</strong> OpenClaw 的 coordinator-specialist 模式和中心 gateway 是最接近结构化 IPC 的设计，但通信仍是非结构化文本，缺少消息确认、背压、优先级。三个系统都有日志和 hook 机制，但这些是面向开发者的调试工具，不是面向终端用户的可观测性界面。</p>
+<p><strong>需要谨慎解读的趋势：三个系统都在加强 Context 管理能力，但这不等于它们在走向 Context-Centric。</strong> Claude Code 最重视的不是推理能力，而是 context 工程（CLAUDE.md 三层记忆、compaction 策略、context isolation）。OpenClaw 的核心创新是 gateway 总线和 routing bindings——本质上是 context 的路由和调度。Hermes 的核心创新是 skill learning loop——把执行结果转化为可复用的 context。这些实践表明 context 管理的重要性正在被行业广泛认知，但把它解读为”向 Context-Centric 架构范式的不自觉滑动”可能存在确认偏误。更审慎的说法是：<strong>这些系统在 Agent-Centric 框架内大幅提升了 context 管理的优先级和成熟度，这验证了 context 管理是核心瓶颈的判断，但不直接证明 Context-Centric 作为替代架构的优越性。</strong> 从 “context 很重要” 到 “context 应该成为架构中心” 之间，仍有一段需要论证的距离。</p>
+<p>三个系统的 OS 成熟度评估如下：</p>
+<table>
+<thead>
+<tr>
+<th>OS Capability</th>
+<th>Claude Code</th>
+<th>OpenClaw</th>
+<th>Hermes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>多任务调度 (Process Mgmt)</td>
+<td>Partial</td>
+<td>Partial</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>Context 隔离 (Memory Isolation)</td>
+<td>Strong</td>
+<td>Strong</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>异步中断 (Interrupt)</td>
+<td>Absent</td>
+<td>Minimal</td>
+<td>Absent</td>
+</tr>
+<tr>
+<td>权限管控 (Security Model)</td>
+<td>Strong</td>
+<td>Strong</td>
+<td>Partial</td>
+</tr>
+<tr>
+<td>结构化通信 (IPC)</td>
+<td>Minimal</td>
+<td>Partial</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>持久化&#x2F;检索 (File System)</td>
+<td>Minimal</td>
+<td>Partial</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>可观测性 (Observability)</td>
+<td>Minimal</td>
+<td>Partial</td>
+<td>Minimal</td>
+</tr>
+<tr>
+<td>自我进化 (Self-Improving)</td>
+<td>Absent</td>
+<td>Absent</td>
+<td>Strong</td>
+</tr>
+<tr>
+<td>回滚&#x2F;事务 (Undo&#x2F;Txn)</td>
+<td>Partial</td>
+<td>Minimal</td>
+<td>Absent</td>
+</tr>
+<tr>
+<td>资源计量 (Resource Accounting)</td>
+<td>Absent</td>
+<td>Minimal</td>
+<td>Absent</td>
+</tr>
+</tbody></table>
+<h2 id="七、面向用户的第一性原理分析"><a href="#七、面向用户的第一性原理分析" class="headerlink" title="七、面向用户的第一性原理分析"></a>七、面向用户的第一性原理分析</h2><p>如果我们抛开所有架构术语，回到最基本的问题——<strong>用户到底需要什么？</strong>——那么 agent 系统的缺陷优先级会和从纯工程角度看非常不同。</p>
+<p>从用户视角出发，只有四个核心诉求：任务完成（agent 把我要的事做完、做对）、可控性（我能在过程中干预、纠偏、中止）、可信赖（它不会做超出授权的事，做错了能回滚）、持续进步（它会越用越好，记住我的偏好和经验）。</p>
+<p>这里需要诚实地承认一个张力：<strong>用户的第一诉求是”任务完成”，而任务完成在当前阶段仍然主要依赖 Agent 的推理质量，而非 context 管理。</strong> 一个推理能力强但 context 管理粗糙的系统，往往比一个推理能力弱但 context 管理精良的系统更能完成用户任务。Context-Centric 架构的论点不是”context 管理比推理能力更重要”，而是”当推理能力成为标准化商品后，context 管理将成为差异化因素”——这是一个对未来的判断，不是对当下的描述。在当前的过渡阶段，context 管理和推理能力同等重要，不应厚此薄彼。</p>
+<p>用这四个诉求去审视 OS 级别的缺陷，优先级排序会变成这样：</p>
+<p><strong>P0：Context 失忆与丢失。</strong> 这是用户感知最强烈的痛点——“我刚刚说过的话它怎么忘了？””为什么同样的错误它反复犯？”几乎所有长任务失败都可以追溯到 context 管理的问题。对应 OS 中的虚拟内存管理——当前系统相当于没有虚拟内存的早期计算机，物理内存（context window）满了就崩溃。三个系统都在用 compaction&#x2F;compact 机制兜底（相当于手动释放内存），但没有系统实现了透明的按需分页。</p>
+<p><strong>P0：不可中断、不可纠偏。</strong> 这是用户体验中最令人沮丧的问题——看着 agent 一步步走向错误的方向，却无法打断。对应 OS 中的中断机制。这不仅是技术问题，更是信任问题：如果我不能在需要时拉住缰绳，我就不敢让 agent 做重要的事。三个系统在这方面几乎都是空白。</p>
+<p><strong>P1：黑盒操作与信任缺失。</strong> “它在干什么？为什么选了这个工具而不是那个？执行到哪一步了？”对应 OS 中的可观测性（strace、&#x2F;proc、top）。当前系统有面向开发者的日志和 hook，但缺少面向终端用户的实时执行可视化和决策解释。</p>
+<p><strong>P1：操作不可逆。</strong> agent 执行了一个错误的命令（比如删了不该删的文件），用户发现没有”undo”。对应 OS 中的事务和日志文件系统。Claude Code 有 checkpoint 机制但不追踪 Bash 操作——这恰恰是最危险的缺口。</p>
+<p>除了上述从 OS 类比中识别出的缺陷，从用户视角还能发现两个 OS 类比中不易看到的<strong>新缺陷</strong>：</p>
+<p><strong>新缺陷一：无资源计量与预算机制。</strong> OS 有 cgroups、ulimit、nice 值来控制进程的资源消耗。但当前 agent 系统中，用户不知道一个任务会消耗多少 token、花费多少钱，无法为任务设定预算上限。对于面向用户的应用来说，”用了多少钱”可能比”用了多少算力”更直接。这是一个 OS 中存在但在 agent 系统中被完全忽视的能力——你能想象一个操作系统不告诉你每个进程用了多少 CPU 和内存吗？</p>
+<p><strong>新缺陷二：缺少语义层面的保护环。</strong> OS 有 Ring 0（内核态）和 Ring 3（用户态）的隔离——用户程序无论怎么写都不能直接操作硬件或修改内核内存。当前 agent 系统有文件系统级别的沙箱（Claude Code 的 Seatbelt、OpenClaw 的 sandbox mode），但缺少<strong>语义层面的保护环</strong>——一句错误的 prompt（”删除所有测试文件”本意是删除测试用例但 agent 理解为删除所有文件）可以穿透所有防线。需要的不是更多的 allow&#x2F;deny 规则，而是一个语义理解层——agent 在执行高风险操作前，用一个独立的”内核态”验证机制来确认操作的语义是否符合用户意图，就像 OS 内核在切换到特权模式前的权限检查。</p>
+<p>从第一性原理看，当前 agent 系统最大的问题不是它们不够”聪明”，而是它们不够”可控”。用户对 agent 的信任度低，根源不是推理能力不足，而是<strong>缺少控制面</strong>——不能中断、不能回滚、不知道发生了什么、不知道要花多少钱。操作系统用了几十年的时间告诉我们：一个系统从”能用”到”可信赖”的关键不是处理器更快，而是控制面更完善。Agent 系统需要补的，正是这一课。</p>
+<h2 id="八、从-OS-设计哲学看未来方向"><a href="#八、从-OS-设计哲学看未来方向" class="headerlink" title="八、从 OS 设计哲学看未来方向"></a>八、从 OS 设计哲学看未来方向</h2><p>如果我们从操作系统几十年的演进历史中提取设计哲学，可以得到几个判断 Agent 架构未来走向的关键原则。</p>
+<p><strong>原则一：硬件标准化之后，软件和数据管理才是竞争力。</strong></p>
+<p>计算机发展的早期，程序员直接操作硬件，手动管理内存，因为机器太贵太稀缺，必须榨干每一条指令的性能。但随着硬件标准化和摩尔定律的推进，竞争力从”怎么用好这块 CPU”转向了”怎么管理文件系统、怎么设计操作系统、怎么构建数据库”。</p>
+<p>AI Agent 系统正处在类似的阶段转换中。当前我们还在”英雄时代”——LLM 能力有限、成本高昂，所有精力都放在”怎么让 Agent 更聪明”上（精心设计 prompt、微调行为、手动编排工具调用）。但 LLM 正在快速标准化和商品化。当推理能力不再稀缺时，”怎么管理 Context”将成为真正的差异化因素。</p>
+<p><strong>原则二：好的抽象层会催生生态。</strong></p>
+<p>ISA 的出现让硬件和软件各自独立演进——硬件厂商可以自由优化微架构，软件开发者不用关心底层实现。这个抽象层催生了整个计算机产业的生态繁荣。</p>
+<p>在 Agent 系统中，Skill 接口如果能成为类似 ISA 的标准抽象层，将带来同样的解耦效应：模型提供商专注于提升基础能力（造更快的 CPU），Skill 开发者专注于定义领域能力（编写标准库），应用开发者专注于编排 Context 流（写应用程序）。当前这三者是高度耦合的，一个 prompt 里混杂着模型调优、能力定义和业务逻辑。</p>
+<p><strong>原则三：控制流应该从数据的结构中涌现，而不是由中心节点命令。</strong></p>
+<p>这是 Unix 哲学的核心——数据通过管道流动，每个程序只处理自己那一段，整个系统的行为从管道的组合中涌现。这比一个中心调度器指挥一切要健壮得多，也灵活得多。</p>
+<p>Agent-Centric 架构的控制流是命令式的（imperative）：Agent 说”先做 A，再做 B，如果失败做 C”。Context-Centric 架构的控制流是声明式的（declarative）：Context 的状态本身决定了它该走向哪里，系统的行为从 Context 的流转规则中涌现。这种声明式的控制模型天然具有更好的容错性、可组合性和可观测性。</p>
+<p><strong>原则四：状态管理的集中化是复杂系统的必然趋势。</strong></p>
+<p>早期的程序把数据散落在各处——寄存器、内存、磁带。后来，文件系统把数据集中管理，数据库更进一步提供了结构化查询和事务保证。这个趋势的驱动力是：当系统变得复杂时，散落的状态会变成不可管理的噩梦。</p>
+<p>当前 Agent-Centric 系统的状态散落在 Agent 的推理链、对话历史、工具返回值中，没有统一的状态视图。Context-Centric 架构将所有状态集中在 Context Object 中，提供了类似数据库的”单一事实来源”（Single Source of Truth），使得状态的查询、回溯、分支、合并都成为可能。</p>
+<h2 id="九、Context-Centric-的挑战与开放问题"><a href="#九、Context-Centric-的挑战与开放问题" class="headerlink" title="九、Context-Centric 的挑战与开放问题"></a>九、Context-Centric 的挑战与开放问题</h2><p>诚实地说，Context-Centric 并不是一个无代价的选择。它面临几个需要解决的关键挑战：</p>
+<p><strong>路由决策的智能性。</strong> Context Router 需要”理解” context 才能做出好的路由决策，但我们又不希望它变成另一个重量级 Agent。如何在轻量和智能之间找到平衡？这可能需要一种”分级路由”机制——简单的 context 用规则路由，复杂的 context 用轻量模型路由。</p>
+<p><strong>Context Schema 的设计。</strong> 统一的 Context 结构是这套架构的基础，但不同领域的 context 差异巨大。如何设计一个既通用又不过度抽象的 Context Schema？这需要在实践中迭代。</p>
+<p><strong>生态冷启动。</strong> 类比 ISA——x86 之所以成功不只因为设计好，更因为生态网络效应。Skill 接口的标准化需要行业共识，这是一个典型的鸡生蛋问题。</p>
+<p><strong>当前 LLM 的限制。</strong> 现有的 LLM 是为对话式交互设计的，它们天然适合 Agent-Centric 模式。让它们作为无状态的 Context Processor 工作，可能需要不同的调用模式和微调策略。</p>
+<p><strong>Pipeline 模型的适用边界。</strong> Context-Centric 的”流水线”隐喻对结构化、可预测的任务（数据处理、文档生成、代码审查）非常自然，但对开放式、创造性的任务（头脑风暴、复杂推理、策略规划）并不天然适配。这类任务的本质是<strong>探索性的</strong>——它们的 context 路由无法在任务开始时确定，需要在推理过程中动态涌现。一个纯粹的 pipeline 模型可能会过度结构化这些任务，反而损害 Agent 的创造性推理能力。系统可能需要同时支持 pipeline 模式和 free-form 模式，根据任务特征自动切换。</p>
+<p><strong>确定性架构 vs 概率性执行的根本张力。</strong> 操作系统的所有抽象（ISA、虚拟内存、进程调度）都建立在底层硬件的确定性行为之上。但 LLM 本质上是概率性的——同一输入可能产生不同输出。这意味着从 OS 借鉴的架构模式在迁移到 Agent 系统时，可能需要根本性的适配。例如：虚拟内存的页面替换策略可以基于精确的访问频率统计，但 context 的”重要性”评估本身就需要语义理解。OS 的确定性假设是这套类比框架的结构性局限，本文的所有 OS 类比都应在这个前提下理解。</p>
+<h2 id="十、结论：从-Agent-Engineering-到-Context-Engineering"><a href="#十、结论：从-Agent-Engineering-到-Context-Engineering" class="headerlink" title="十、结论：从 Agent Engineering 到 Context Engineering"></a>十、结论：从 Agent Engineering 到 Context Engineering</h2><p>Agent-Centric 和 Context-Centric 不是非此即彼的二元选择。更可能的演进路径是：<strong>短期内 Agent-Centric 继续主导</strong>（因为当前 LLM 的能力边界要求精心的 Agent 设计），<strong>但中长期会向 Context-Centric 迁移</strong>（因为模型能力的标准化会让 Agent 变成可替换的通用处理器）。</p>
+<p>这和计算机的演进完全一致：在机器稀缺的年代，程序员直接面向硬件编程；硬件标准化之后，操作系统和数据管理才是真正的战场。</p>
+<p>如果说当前的 AI 工程主流是 <strong>Prompt Engineering</strong>（让 Agent 更聪明），那么下一个阶段的重心将向 <strong>Context Engineering</strong>（让 Context 的管理更优秀）倾斜。但这不是一个替代关系——Prompt Engineering 不会消失，就像汇编语言优化在有了编译器之后仍然在关键路径上不可替代。更准确的说法是：<strong>系统级竞争力的重心将从 Agent 优化转向 Context 管理</strong>，但 Agent 的推理质量始终是地基，Context 管理是在地基之上构建的上层建筑。这不仅是架构风格的转变，更是一次认知框架的升级——从”以主体为中心”到”以信息为中心”，从”命令式控制”到”声明式涌现”。</p>
+<blockquote>
+<p>“当 CPU 足够快、足够便宜、足够标准化之后，没人再讨论怎么优化 CPU——大家讨论的是怎么设计文件系统、怎么构建数据库。AI Agent 的未来也是如此。”</p>
+</blockquote>
+<h2 id="附录：全景总览"><a href="#附录：全景总览" class="headerlink" title="附录：全景总览"></a>附录：全景总览</h2><p><a href="/images/context-centric/context-centric-architecture.svg"><img src="/images/context-centric/context-centric-architecture.svg" alt="Context-Centric vs Agent-Centric 架构全景图"></a></p>
+<p><em>图 2：把操作系统类比映射表、核心架构差异表、Claude Code &#x2F; OpenClaw &#x2F; Hermes 三个系统的 OS 成熟度评估，以及面向用户的 P0&#x2F;P1 缺陷优先级，打包在同一张图里（点击图片可打开原尺寸）。</em></p>
+<hr>
+<p><em>本文基于对 Blackboard Architecture (1986)、Unix Pipe Philosophy (1973) 和 Von Neumann Architecture 的类比分析，以及对 Claude Code、OpenClaw、Hermes Agent 三个真实系统的架构实证。文中提出的 Context-Centric 范式尚处于概念阶段，欢迎讨论与批评。</em></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepSeek-Harness/" rel="tag"># DeepSeek Harness</a>
+              <a href="/tags/Agent-%E6%9E%B6%E6%9E%84/" rel="tag"># Agent 架构</a>
+              <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag"># 操作系统</a>
+              <a href="/tags/Context-Engineering/" rel="tag"># Context Engineering</a>
+              <a href="/tags/%E8%8C%83%E5%BC%8F%E5%AF%B9%E6%AF%94/" rel="tag"># 范式对比</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/10/21/deepseek-harness-cordis-architecture/" rel="prev" title="DeepSeek Harness &#x2F; Cordis 架构解析">
+                  <i class="fa fa-angle-left"></i> DeepSeek Harness / Cordis 架构解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Ayxm</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Ayxm1412/Ayxm1412.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

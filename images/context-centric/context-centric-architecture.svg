@@ -1,0 +1,390 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="2754" viewBox="0 0 1240 2754" role="img" aria-label="Context-Centric vs Agent-Centric Architecture">
+<title>Context-Centric vs Agent-Centric Architecture</title>
+<rect width="1240" height="2754" fill="#ffffff"/>
+<rect x="1" y="1" width="1238" height="2752" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+<text x="56.0" y="44.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="23" fill="#0f172a" font-weight="700" text-anchor="start">Context-Centric vs Agent-Centric Architecture</text>
+<text x="56.0" y="66.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10" fill="#64748b" font-weight="600" text-anchor="start" letter-spacing="1.4">AGENT SYSTEM DESIGN PARADIGM COMPARISON — FROM OS PHILOSOPHY</text>
+<text x="1184.0" y="38.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#94a3b8" font-weight="600" text-anchor="end">REV 3.0</text>
+<text x="1184.0" y="52.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#94a3b8" font-weight="400" text-anchor="end">2026-04-15</text>
+<line x1="56.0" y1="82.0" x2="1184.0" y2="82.0" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="56.0" y="106.0" width="550.0" height="40.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="72.0" y="131.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">Agent-Centric Architecture</text>
+<rect x="530.3" y="117.0" width="59.7" height="19.0" rx="3" fill="none" stroke="#94a3b8" stroke-width="1"/>
+<text x="560.2" y="130.5" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="9.5" fill="#64748b" font-weight="700" text-anchor="middle">Current</text>
+<rect x="56.0" y="146.0" width="550.0" height="683.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<line x1="331.0" y1="409.5" x2="163.0" y2="269.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="331.0" y1="409.5" x2="499.0" y2="269.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="331.0" y1="409.5" x2="127.0" y2="409.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="331.0" y1="409.5" x2="535.0" y2="409.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="331.0" y1="409.5" x2="207.0" y2="549.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="331.0" y1="409.5" x2="455.0" y2="549.5" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="128.3" y="256.5" width="69.3" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="163.0" y="273.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Context</text>
+<rect x="467.0" y="256.5" width="64.0" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="499.0" y="273.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Memory</text>
+<rect x="95.0" y="396.5" width="64.0" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="127.0" y="413.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Tools</text>
+<rect x="503.0" y="396.5" width="64.0" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="535.0" y="413.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Skills</text>
+<rect x="175.0" y="536.5" width="64.0" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="207.0" y="553.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Prompt</text>
+<rect x="423.0" y="536.5" width="64.0" height="26.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="455.0" y="553.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="500" text-anchor="middle">Output</text>
+<rect x="261.0" y="374.5" width="140.0" height="70.0" rx="6" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+<text x="331.0" y="406.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="15" fill="#ffffff" font-weight="700" text-anchor="middle">Agent</text>
+<text x="331.0" y="425.5" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="9" fill="#cbd5e1" font-weight="400" text-anchor="middle">Central Controller</text>
+<rect x="72.0" y="703.0" width="518.0" height="112.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="86.0" y="725.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="9" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="1">CONTROL FLOW</text>
+<text x="86.0" y="745.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#475569" font-weight="400" text-anchor="start">Agent 处于中心，主动拉取 context、决定调用哪个 tool、管理所有状态。一切围绕 Agent 的</text>
+<text x="86.0" y="764.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#475569" font-weight="400" text-anchor="start">推理循环运转。</text>
+<rect x="634.0" y="106.0" width="550.0" height="40.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="650.0" y="131.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">Context-Centric Architecture</text>
+<rect x="1102.8" y="117.0" width="65.2" height="19.0" rx="3" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+<text x="1135.4" y="130.5" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="9.5" fill="#ffffff" font-weight="700" text-anchor="middle">Proposed</text>
+<rect x="634.0" y="146.0" width="550.0" height="683.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="646.0" y="158.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="190.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">Input</text>
+<line x1="695.3" y1="168.0" x2="695.3" y2="206.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="710.3" y="169.0" width="98.1" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="759.3" y="183.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Context Object</text>
+<text x="815.4" y="184.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#94a3b8" font-weight="700" text-anchor="start">←</text>
+<rect x="837.4" y="169.0" width="42.0" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="858.4" y="183.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Task</text>
+<rect x="886.4" y="169.0" width="47.8" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="910.4" y="183.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">State</text>
+<rect x="941.3" y="169.0" width="56.5" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="969.5" y="183.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">History</text>
+<text x="660.0" y="210.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">context 作为一等实体进入系统</text>
+<rect x="646.0" y="225.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="257.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">Router</text>
+<line x1="704.9" y1="235.0" x2="704.9" y2="273.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="719.9" y="236.0" width="160.3" height="22.0" rx="3" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="800.1" y="250.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Context Router / Scheduler</text>
+<text x="660.0" y="277.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">lightweight dispatch · 按状态分发</text>
+<rect x="646.0" y="292.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="324.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">ISA</text>
+<line x1="685.5" y1="302.0" x2="685.5" y2="340.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="700.5" y="303.0" width="92.3" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="746.7" y="317.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Skill:Summarize</text>
+<rect x="799.9" y="303.0" width="89.4" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="844.6" y="317.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Skill:Generate</text>
+<rect x="896.3" y="303.0" width="80.8" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="936.7" y="317.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Skill:Analyze</text>
+<rect x="984.1" y="303.0" width="83.6" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="1025.9" y="317.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Skill:Extract</text>
+<text x="660.0" y="344.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">标准化能力契约层</text>
+<rect x="646.0" y="359.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="391.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">CPU</text>
+<line x1="689.4" y1="369.0" x2="689.4" y2="407.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="704.4" y="370.0" width="59.4" height="22.0" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+<text x="734.0" y="384.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Agent-α</text>
+<rect x="770.7" y="370.0" width="59.4" height="22.0" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+<text x="800.4" y="384.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Agent-β</text>
+<text x="660.0" y="411.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">swappable · upgradable</text>
+<rect x="646.0" y="426.0" width="526.0" height="58.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="458.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#0f172a" font-weight="700" text-anchor="start">Bus</text>
+<line x1="687.4" y1="436.0" x2="687.4" y2="474.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="702.4" y="437.0" width="118.9" height="22.0" rx="3" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="761.9" y="451.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Context Bus / Index</text>
+<text x="660.0" y="478.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">DMA bypass · pointer/ref only · no semantic load on CPU</text>
+<rect x="646.0" y="493.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="525.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">I/O</text>
+<line x1="684.6" y1="503.0" x2="684.6" y2="541.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="699.6" y="504.0" width="77.7" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="738.5" y="518.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Tool:Search</text>
+<rect x="784.3" y="504.0" width="55.6" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="812.1" y="518.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Tool:DB</text>
+<rect x="846.9" y="504.0" width="58.5" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="876.2" y="518.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Tool:API</text>
+<rect x="912.4" y="504.0" width="55.6" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="940.2" y="518.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Tool:FS</text>
+<text x="660.0" y="545.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">标准总线协议访问</text>
+<rect x="646.0" y="560.0" width="526.0" height="58.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="660.0" y="592.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#64748b" font-weight="700" text-anchor="start">Output</text>
+<line x1="704.9" y1="570.0" x2="704.9" y2="608.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="719.9" y="571.0" width="103.9" height="22.0" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="771.9" y="585.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">Updated Context</text>
+<text x="830.8" y="586.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#94a3b8" font-weight="700" text-anchor="start">→</text>
+<text x="660.0" y="612.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">next stage / return</text>
+<rect x="646.0" y="627.0" width="526.0" height="58.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="660.0" y="659.0" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10" fill="#0f172a" font-weight="700" text-anchor="start">Evolve</text>
+<line x1="702.1" y1="637.0" x2="702.1" y2="675.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="717.1" y="638.0" width="60.7" height="22.0" rx="3" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="747.4" y="652.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">New Skill</text>
+<rect x="784.8" y="638.0" width="97.3" height="22.0" rx="3" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="833.4" y="652.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="10.5" fill="#334155" font-weight="500" text-anchor="middle">New Instruction</text>
+<text x="660.0" y="679.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8.5" fill="#94a3b8" font-weight="400" text-anchor="start">self-improving · output → ISA extension</text>
+<rect x="650.0" y="703.0" width="518.0" height="112.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="664.0" y="725.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="9" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="1">DATA FLOW</text>
+<text x="664.0" y="745.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="400" text-anchor="start">Context 是一等公民，沿管道流转。</text>
+<text x="664.0" y="761.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="400" text-anchor="start">Agent 是无状态处理器，可随时替换。</text>
+<text x="664.0" y="778.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="400" text-anchor="start">Context Bus 使非语义数据绕过 Agent。</text>
+<text x="664.0" y="794.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#475569" font-weight="400" text-anchor="start">执行产出可反馈为新 Skill（自我进化）。</text>
+<text x="56.0" y="869.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="15" fill="#0f172a" font-weight="700" text-anchor="start">操作系统类比映射</text>
+<text x="186.0" y="869.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#94a3b8" font-weight="500" text-anchor="start" letter-spacing="0.8">OPERATING SYSTEM ANALOGY MAPPING</text>
+<line x1="56.0" y1="881.0" x2="1184.0" y2="881.0" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="56.0" y="909.0" width="1128.0" height="34.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="929.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">OS CONCEPT</text>
+<text x="225.0" y="929.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">AGENT SYSTEM 映射</text>
+<text x="405.0" y="929.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">AGENT-CENTRIC 实现</text>
+<text x="755.0" y="929.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">CONTEXT-CENTRIC 实现</text>
+<line x1="56.0" y1="943.0" x2="1184.0" y2="943.0" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="961.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">CPU</text>
+<text x="225.0" y="961.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent / LLM</text>
+<text x="405.0" y="961.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">系统核心，主导所有决策</text>
+<text x="755.0" y="961.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">无状态处理器，可热替换（概率性兼容，非确定性等价）</text>
+<line x1="56.0" y1="943.0" x2="56.0" y2="977.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="977.5" x2="1184.0" y2="977.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="977.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="995.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">File System</text>
+<text x="225.0" y="995.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context 管理</text>
+<text x="405.0" y="995.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">附属于 Agent 的传入参数</text>
+<text x="755.0" y="995.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">核心基础设施，有结构、版本、索引</text>
+<line x1="56.0" y1="977.5" x2="56.0" y2="1012.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1012.0" x2="1184.0" y2="1012.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1030.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">ISA</text>
+<text x="225.0" y="1030.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Skill 接口契约</text>
+<text x="405.0" y="1030.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">隐式约定，与 Agent 强耦合</text>
+<text x="755.0" y="1030.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">标准化接口层（模糊能力承诺，非位级精确契约）</text>
+<line x1="56.0" y1="1012.0" x2="56.0" y2="1046.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1046.5" x2="1184.0" y2="1046.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1046.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1064.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Virtual Memory</text>
+<text x="225.0" y="1064.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context Window 管理</text>
+<text x="405.0" y="1064.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">全量加载，超限即失败</text>
+<text x="755.0" y="1064.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">按需分页加载，透明换入换出（当前 RAG ≈ overlay，尚未达 VM 透明度）</text>
+<line x1="56.0" y1="1046.5" x2="56.0" y2="1081.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1081.0" x2="1184.0" y2="1081.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1099.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Cache L1/L2/L3</text>
+<text x="225.0" y="1099.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context 亲近度层级</text>
+<text x="405.0" y="1099.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">无分层，prompt 即全部</text>
+<text x="755.0" y="1099.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">L1 Prompt / L2 Session / L3 KB / Disk（需解决缓存一致性）</text>
+<line x1="56.0" y1="1081.0" x2="56.0" y2="1115.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1115.5" x2="1184.0" y2="1115.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1115.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1133.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Process Scheduler</text>
+<text x="225.0" y="1133.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context Router</text>
+<text x="405.0" y="1133.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent 自身承担调度</text>
+<text x="755.0" y="1133.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">轻量独立组件，基于 context 状态分发</text>
+<line x1="56.0" y1="1115.5" x2="56.0" y2="1150.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1150.0" x2="1184.0" y2="1150.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1168.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">I/O Devices</text>
+<text x="225.0" y="1168.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Tool / 外部服务</text>
+<text x="405.0" y="1168.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent 直接管理工具调用</text>
+<text x="755.0" y="1168.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">通过标准总线协议（Schema）统一访问</text>
+<line x1="56.0" y1="1150.0" x2="56.0" y2="1184.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1184.5" x2="1184.0" y2="1184.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1184.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1202.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Pipe stdin/stdout</text>
+<text x="225.0" y="1202.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context 流转接口</text>
+<text x="405.0" y="1202.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">消息传递，非结构化</text>
+<text x="755.0" y="1202.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">标准化 context 管道，可组合</text>
+<line x1="56.0" y1="1184.5" x2="56.0" y2="1219.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1219.0" x2="1184.0" y2="1219.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1237.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">DMA / Bus</text>
+<text x="225.0" y="1237.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context Bus / Index</text>
+<text x="405.0" y="1237.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">所有数据流经 Agent，含非语义噪声</text>
+<text x="755.0" y="1237.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">非语义数据（ID 等）绕过 Agent，仅传引用</text>
+<line x1="56.0" y1="1219.0" x2="56.0" y2="1253.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1253.5" x2="1184.0" y2="1253.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1253.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1271.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Software Install</text>
+<text x="225.0" y="1271.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Self-Improving</text>
+<text x="405.0" y="1271.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">需修改中心 Agent 本身，风险高</text>
+<text x="755.0" y="1271.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">执行产出新 Skill（≈自动更新，需质量门控与回滚机制）</text>
+<line x1="56.0" y1="1253.5" x2="56.0" y2="1288.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1288.0" x2="1184.0" y2="1288.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1288.0" width="1128.0" height="0.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="56.0" y="1326.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="15" fill="#0f172a" font-weight="700" text-anchor="start">核心架构差异</text>
+<text x="156.0" y="1326.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#94a3b8" font-weight="500" text-anchor="start" letter-spacing="0.8">KEY ARCHITECTURAL DIFFERENCES</text>
+<line x1="56.0" y1="1338.0" x2="1184.0" y2="1338.0" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="56.0" y="1366.0" width="1128.0" height="34.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="1386.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">DIMENSION</text>
+<text x="237.0" y="1386.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">AGENT-CENTRIC</text>
+<text x="716.0" y="1386.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">CONTEXT-CENTRIC</text>
+<line x1="56.0" y1="1400.0" x2="1184.0" y2="1400.0" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="1418.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Coupling</text>
+<text x="237.0" y="1418.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent 与 Context 紧耦合</text>
+<text x="716.0" y="1418.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent 与 Context 完全解耦</text>
+<line x1="56.0" y1="1400.0" x2="56.0" y2="1434.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1434.5" x2="1184.0" y2="1434.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1434.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1452.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Model Upgrade</text>
+<text x="237.0" y="1452.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">需 Prompt 重写和行为调优</text>
+<text x="716.0" y="1452.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">ISA 接口兼容即可替换（概率性兼容）</text>
+<line x1="56.0" y1="1434.5" x2="56.0" y2="1469.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1469.0" x2="1184.0" y2="1469.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1487.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Composability</text>
+<text x="237.0" y="1487.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Multi-Agent 消息传递协作</text>
+<text x="716.0" y="1487.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">管道式组合，Unix 哲学</text>
+<line x1="56.0" y1="1469.0" x2="56.0" y2="1503.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1503.5" x2="1184.0" y2="1503.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1503.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1521.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Self-Improving</text>
+<text x="237.0" y="1521.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">改进 Agent = 修改系统核心</text>
+<text x="716.0" y="1521.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">产出即 Skill，ISA 自然生长</text>
+<line x1="56.0" y1="1503.5" x2="56.0" y2="1538.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1538.0" x2="1184.0" y2="1538.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1556.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Context Bus</text>
+<text x="237.0" y="1556.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">非语义数据流经 Agent 致幻觉</text>
+<text x="716.0" y="1556.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">DMA 旁路，Agent 只处理语义</text>
+<line x1="56.0" y1="1538.0" x2="56.0" y2="1572.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1572.5" x2="1184.0" y2="1572.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1572.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1590.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Failure Mode</text>
+<text x="237.0" y="1590.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Agent 失败 = 系统失败</text>
+<text x="716.0" y="1590.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">单处理器失败，Context 可重路由</text>
+<line x1="56.0" y1="1572.5" x2="56.0" y2="1607.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1607.0" x2="1184.0" y2="1607.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1625.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">Scalability</text>
+<text x="237.0" y="1625.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">单 Agent 瓶颈</text>
+<text x="716.0" y="1625.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">Context 并行分片处理</text>
+<line x1="56.0" y1="1607.0" x2="56.0" y2="1641.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1641.5" x2="1184.0" y2="1641.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1641.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1659.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#0f172a" font-weight="600" text-anchor="start">State Mgmt</text>
+<text x="237.0" y="1659.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">状态散落在 Agent 推理链中</text>
+<text x="716.0" y="1659.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" fill="#334155" font-weight="400" text-anchor="start">状态集中在 Context Object</text>
+<line x1="56.0" y1="1641.5" x2="56.0" y2="1676.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1676.0" x2="1184.0" y2="1676.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1676.0" width="1128.0" height="0.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="56.0" y="1714.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="15" fill="#0f172a" font-weight="700" text-anchor="start">实证：三个系统的 OS 成熟度</text>
+<text x="259.2" y="1714.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#94a3b8" font-weight="500" text-anchor="start" letter-spacing="0.8">REAL-WORLD OS MATURITY ASSESSMENT</text>
+<line x1="56.0" y1="1726.0" x2="1184.0" y2="1726.0" stroke="#cbd5e1" stroke-width="1"/>
+<text x="56.0" y="1742.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10" fill="#94a3b8" font-weight="400" text-anchor="start">STRONG = OS 级实现 · PARTIAL = 临时绕行 · MINIMAL = 雏形 · ABSENT = 尚未涉及</text>
+<rect x="56.0" y="1754.0" width="1128.0" height="34.0" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="1774.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">OS CAPABILITY</text>
+<text x="247.0" y="1774.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="0.4">AGENT 映射</text>
+<text x="534.0" y="1774.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="center" letter-spacing="0.4">CLAUDE CODE</text>
+<text x="794.0" y="1774.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="center" letter-spacing="0.4">OPENCLAW</text>
+<text x="1054.0" y="1774.6" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#64748b" font-weight="700" text-anchor="center" letter-spacing="0.4">HERMES</text>
+<line x1="56.0" y1="1788.0" x2="1184.0" y2="1788.0" stroke="#cbd5e1" stroke-width="1"/>
+<text x="67.0" y="1806.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Process Mgmt</text>
+<text x="247.0" y="1806.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">多任务调度</text>
+<text x="534.0" y="1806.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="794.0" y="1806.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="1054.0" y="1806.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<line x1="56.0" y1="1788.0" x2="56.0" y2="1822.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1822.5" x2="1184.0" y2="1822.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1822.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1840.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Memory Isolation</text>
+<text x="247.0" y="1840.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">Context 隔离</text>
+<text x="534.0" y="1840.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<text x="794.0" y="1840.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<text x="1054.0" y="1840.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<line x1="56.0" y1="1822.5" x2="56.0" y2="1857.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1857.0" x2="1184.0" y2="1857.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1875.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Interrupt</text>
+<text x="247.0" y="1875.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">异步中断</text>
+<text x="534.0" y="1875.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<text x="794.0" y="1875.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="1054.0" y="1875.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<line x1="56.0" y1="1857.0" x2="56.0" y2="1891.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1891.5" x2="1184.0" y2="1891.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1891.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1909.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Security Model</text>
+<text x="247.0" y="1909.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">权限管控</text>
+<text x="534.0" y="1909.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<text x="794.0" y="1909.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<text x="1054.0" y="1909.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<line x1="56.0" y1="1891.5" x2="56.0" y2="1926.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1926.0" x2="1184.0" y2="1926.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="1944.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">IPC</text>
+<text x="247.0" y="1944.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">结构化通信</text>
+<text x="534.0" y="1944.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="794.0" y="1944.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="1054.0" y="1944.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<line x1="56.0" y1="1926.0" x2="56.0" y2="1960.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1960.5" x2="1184.0" y2="1960.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="1960.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="1978.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">File System</text>
+<text x="247.0" y="1978.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">持久化 / 检索</text>
+<text x="534.0" y="1978.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="794.0" y="1978.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="1054.0" y="1978.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<line x1="56.0" y1="1960.5" x2="56.0" y2="1995.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="1995.0" x2="1184.0" y2="1995.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="2013.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Observability</text>
+<text x="247.0" y="2013.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">可观测性</text>
+<text x="534.0" y="2013.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="794.0" y="2013.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="1054.0" y="2013.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<line x1="56.0" y1="1995.0" x2="56.0" y2="2029.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="2029.5" x2="1184.0" y2="2029.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="2029.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="2047.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Self-Improving</text>
+<text x="247.0" y="2047.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">自我进化</text>
+<text x="534.0" y="2047.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<text x="794.0" y="2047.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<text x="1054.0" y="2047.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">STRONG</text>
+<line x1="56.0" y1="2029.5" x2="56.0" y2="2064.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="2064.0" x2="1184.0" y2="2064.0" stroke="#e9eef5" stroke-width="1"/>
+<text x="67.0" y="2082.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Undo / Txn</text>
+<text x="247.0" y="2082.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">回滚 / 事务</text>
+<text x="534.0" y="2082.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">PARTIAL</text>
+<text x="794.0" y="2082.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="1054.0" y="2082.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<line x1="56.0" y1="2064.0" x2="56.0" y2="2098.5" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="2098.5" x2="1184.0" y2="2098.5" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="2098.5" width="1128.0" height="34.5" rx="0" fill="#fbfcfe" stroke="none" stroke-width="1"/>
+<text x="67.0" y="2116.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#0f172a" font-weight="600" text-anchor="start">Resource Acct</text>
+<text x="247.0" y="2116.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="start">资源计量</text>
+<text x="534.0" y="2116.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<text x="794.0" y="2116.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">MINIMAL</text>
+<text x="1054.0" y="2116.5" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#334155" font-weight="400" text-anchor="center">ABSENT</text>
+<line x1="56.0" y1="2098.5" x2="56.0" y2="2133.0" stroke="#e9eef5" stroke-width="1"/>
+<line x1="56.0" y1="2133.0" x2="1184.0" y2="2133.0" stroke="#e9eef5" stroke-width="1"/>
+<rect x="56.0" y="2133.0" width="1128.0" height="0.0" rx="0" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+<text x="56.0" y="2171.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="15" fill="#0f172a" font-weight="700" text-anchor="start">面向用户的第一性原理优先级</text>
+<text x="261.0" y="2171.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10.5" fill="#94a3b8" font-weight="500" text-anchor="start" letter-spacing="0.8">USER-FACING PRIORITY ANALYSIS</text>
+<line x1="56.0" y1="2183.0" x2="1184.0" y2="2183.0" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="56.0" y="2211.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="68.0" y="2223.0" width="69.1" height="17.0" rx="2" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+<text x="102.5" y="2234.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#ffffff" font-weight="700" text-anchor="middle">P0 CRITICAL</text>
+<text x="147.1" y="2236.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">Context 失忆与丢失</text>
+<text x="68.0" y="2263.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：agent「忘了我说的话」、重复犯错、长任务中途崩溃。</text>
+<text x="68.0" y="2279.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：Virtual Memory / Context Window 管理。</text>
+<text x="68.0" y="2295.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：三个系统均依赖 compaction 兜底，无透明分页机制。</text>
+<rect x="630.0" y="2211.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="642.0" y="2223.0" width="69.1" height="17.0" rx="2" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+<text x="676.5" y="2234.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#ffffff" font-weight="700" text-anchor="middle">P0 CRITICAL</text>
+<text x="721.1" y="2236.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">不可中断、不可纠偏</text>
+<text x="642.0" y="2263.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：agent 走错方向但无法打断，只能等它做完或重来。</text>
+<text x="642.0" y="2279.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：Interrupt / 抢占式调度。</text>
+<text x="642.0" y="2295.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：三个系统均无真正异步中断机制。</text>
+<rect x="56.0" y="2339.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="68.0" y="2351.0" width="49.2" height="17.0" rx="2" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="92.6" y="2362.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#64748b" font-weight="700" text-anchor="middle">P1 HIGH</text>
+<text x="127.2" y="2364.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">黑盒操作、信任缺失</text>
+<text x="68.0" y="2391.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：不知道 agent 在做什么、为什么这样决策。</text>
+<text x="68.0" y="2407.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：Observability / strace / /proc。</text>
+<text x="68.0" y="2423.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：hook 和 log 存在但不面向终端用户。</text>
+<rect x="630.0" y="2339.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="642.0" y="2351.0" width="49.2" height="17.0" rx="2" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="666.6" y="2362.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#64748b" font-weight="700" text-anchor="middle">P1 HIGH</text>
+<text x="701.2" y="2364.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">操作不可逆、无法回滚</text>
+<text x="642.0" y="2391.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：agent 执行了错误操作后无法撤回。</text>
+<text x="642.0" y="2407.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：事务、日志文件系统（journaling FS）。</text>
+<text x="642.0" y="2423.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：Claude Code 有 checkpoint 但不追踪 Bash 操作。</text>
+<rect x="56.0" y="2467.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="68.0" y="2479.0" width="33.3" height="17.0" rx="2" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="84.6" y="2490.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#64748b" font-weight="700" text-anchor="middle">NEW</text>
+<text x="111.3" y="2492.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">无资源计量与预算</text>
+<text x="68.0" y="2519.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：不知道一个任务会花多少 token / 钱，无法设上限。</text>
+<text x="68.0" y="2535.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：cgroups / ulimit / 资源配额。</text>
+<text x="68.0" y="2551.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：三个系统均无实时资源可见性或预算机制。</text>
+<rect x="630.0" y="2467.0" width="554.0" height="114.0" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<rect x="642.0" y="2479.0" width="33.3" height="17.0" rx="2" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="658.6" y="2490.6" font-family="'SF Mono', Monaco, Consolas, 'Courier New', monospace" font-size="8.5" fill="#64748b" font-weight="700" text-anchor="middle">NEW</text>
+<text x="685.3" y="2492.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#0f172a" font-weight="700" text-anchor="start">无保护环 / 用户态隔离</text>
+<text x="642.0" y="2519.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">用户感知：一句错误的 prompt 导致 agent 做出破坏性操作。</text>
+<text x="642.0" y="2535.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 对应：Ring0 / Ring3，内核态 vs 用户态。</text>
+<text x="642.0" y="2551.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">现状：sandbox 存在但缺乏语义层面的保护环。</text>
+<line x1="56.0" y1="2621.0" x2="1184.0" y2="2621.0" stroke="#cbd5e1" stroke-width="1"/>
+<text x="56.0" y="2651.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="9" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="1">Core thesis</text>
+<text x="140.0" y="2651.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="12" fill="#0f172a" font-weight="500" text-anchor="start">As LLMs commoditize, the competitive advantage shifts from agent engineering to context engineering.</text>
+<text x="56.0" y="2683.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="9" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="1">Key caveat</text>
+<text x="140.0" y="2683.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" fill="#64748b" font-weight="400" text-anchor="start">OS 的所有抽象（ISA、虚拟内存、进程调度）都建立在硬件确定性行为之上；LLM 是概率性的——本文所有 OS 类比都应在这个结构性局限下理解。</text>
+<text x="56.0" y="2712.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="9" fill="#64748b" font-weight="700" text-anchor="start" letter-spacing="1">Ref</text>
+<text x="140.0" y="2712.0" font-family="system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="10" fill="#94a3b8" font-weight="400" text-anchor="start">Blackboard Architecture (1986) · Unix Pipe Philosophy (1973) · Von Neumann Architecture · Claude Code · OpenClaw · Hermes Agent</text>
+</svg>
