@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ayxm1412.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="0. 核心结论 一切皆插件：模型适配、工具、会话、沙箱，连 agent loop 本身，都是挂在同一个 ctx 上的插件；没有特权内核，均可从配置替换。 Cordis 是微内核：内核只做四件事——服务解析、注册、事件 IPC、生命周期。插件&#x3D;镜像，Fiber&#x3D;进程，注册&#x3D;可逆 effect，事件&#x3D;IPC，能力接口&#x3D;可热插拔的驱动（seam）。 Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DeepSeek Harness &#x2F; Cordis 架构解析">
+<meta property="og:url" content="https://ayxm1412.github.io/2026/10/21/deepseek-harness-cordis-architecture/index.html">
+<meta property="og:site_name" content="Ayxm的博客">
+<meta property="og:description" content="0. 核心结论 一切皆插件：模型适配、工具、会话、沙箱，连 agent loop 本身，都是挂在同一个 ctx 上的插件；没有特权内核，均可从配置替换。 Cordis 是微内核：内核只做四件事——服务解析、注册、事件 IPC、生命周期。插件&#x3D;镜像，Fiber&#x3D;进程，注册&#x3D;可逆 effect，事件&#x3D;IPC，能力接口&#x3D;可热插拔的驱动（seam）。 Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/05-cordis-microkernel.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/06-cordis-fiber-state.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/07-cordis-waterfall.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/08-cordis-event-sourcing.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/11-cordis-capability-seam.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/09-cordis-conversation-flow.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/10-cordis-plugin-reload.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/12-cordis-ctx-model.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/13-cordis-service-resolution.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/14-cordis-provide-routes.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/15-cordis-runtime-model.svg">
+<meta property="og:image" content="https://ayxm1412.github.io/images/deepseek-harness/16-search-harness-two-tier.svg">
+<meta property="article:published_time" content="2026-10-21T14:19:00.000Z">
+<meta property="article:modified_time" content="2026-10-21T15:09:46.577Z">
+<meta property="article:author" content="Ayxm">
+<meta property="article:tag" content="DeepSeek Harness">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Cordis">
+<meta property="article:tag" content="插件化架构">
+<meta property="article:tag" content="事件溯源">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ayxm1412.github.io/images/deepseek-harness/05-cordis-microkernel.svg">
+
+
+<link rel="canonical" href="https://ayxm1412.github.io/2026/10/21/deepseek-harness-cordis-architecture/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ayxm1412.github.io/2026/10/21/deepseek-harness-cordis-architecture/","path":"2026/10/21/deepseek-harness-cordis-architecture/","title":"DeepSeek Harness / Cordis 架构解析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DeepSeek Harness / Cordis 架构解析 | Ayxm的博客</title>
+  
+
+
+
+
+
+
+
+
+  
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Ayxm的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录 · 思考 · 分享</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E6%A0%B8%E5%BF%83%E7%BB%93%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">0. 核心结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%97%AE%E9%A2%98%E8%B5%B7%E7%82%B9%EF%BC%9AAgent-Loop-%E7%9A%84%E6%8C%81%E7%BB%AD%E8%86%A8%E8%83%80"><span class="nav-number">2.</span> <span class="nav-text">1. 问题起点：Agent Loop 的持续膨胀</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9C%BA%E5%88%B6%E4%B8%80%EF%BC%9A%E6%8F%92%E4%BB%B6%E5%8D%B3%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">2. 机制一：插件即进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9C%BA%E5%88%B6%E4%BA%8C%EF%BC%9A%E9%80%9A%E4%BF%A1%E5%8D%B3%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">3. 机制二：通信即中间件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9C%BA%E5%88%B6%E4%B8%89%EF%BC%9A%E7%8A%B6%E6%80%81%E5%8D%B3%E4%BA%8B%E4%BB%B6%E6%BA%AF%E6%BA%90"><span class="nav-number">5.</span> <span class="nav-text">4. 机制三：状态即事件溯源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%9C%BA%E5%88%B6%E5%9B%9B%EF%BC%9A%E8%83%BD%E5%8A%9B%E6%8E%A5%E7%BC%9D%EF%BC%88Capability-Seam%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">5. 机制四：能力接缝（Capability Seam）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%BA%E5%88%B6%E7%9A%84%E5%AE%9E%E9%99%85%E8%BF%90%E8%A1%8C%EF%BC%9A%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%95%B4%E5%AF%B9%E8%AF%9D"><span class="nav-number">7.</span> <span class="nav-text">6. 机制的实际运行：一次完整对话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%8F%92%E4%BB%B6%E7%83%AD%E6%8F%92%E6%8B%94"><span class="nav-number">8.</span> <span class="nav-text">7. 插件热插拔</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94%EF%BC%9A%E4%B8%80%E7%AD%89%E5%85%AC%E6%B0%91%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-number">9.</span> <span class="nav-text">8. 横向对比：一等公民的差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E6%B7%B1%E5%85%A5-ctx%EF%BC%9A%E8%A2%AB-Proxy-%E5%8C%85%E8%A3%85%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%AE%B9%E5%99%A8"><span class="nav-number">10.</span> <span class="nav-text">9. 深入 ctx：被 Proxy 包装的服务容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%9E%8B%EF%BC%9A%E5%8D%95%E8%BF%9B%E7%A8%8B%E5%8D%95%E7%BA%BF%E7%A8%8B%EF%BC%8C%E5%A4%9A%E4%BC%9A%E8%AF%9D%E4%BB%A5%E5%8D%8F%E7%A8%8B%E6%96%B9%E5%BC%8F%E4%BA%A4%E6%9B%BF"><span class="nav-number">11.</span> <span class="nav-text">10. 运行模型：单进程单线程，多会话以协程方式交替</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E4%BC%9A%E8%AF%9D%E5%90%8C%E6%97%B6%E4%BF%AE%E6%94%B9%E5%90%8C%E4%B8%80%E6%96%87%E4%BB%B6"><span class="nav-number">11.1.</span> <span class="nav-text">两个会话同时修改同一文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E5%B1%80%E9%99%90%E4%B8%8E%E4%BB%A3%E4%BB%B7"><span class="nav-number">12.</span> <span class="nav-text">11. 局限与代价</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E5%BB%B6%E4%BC%B8%EF%BC%9A%E4%BB%A3%E7%A0%81%E5%85%A8%E7%94%B1%E6%A8%A1%E5%9E%8B%E7%BC%96%E5%86%99%E6%97%B6%E7%9A%84%E9%97%AE%E9%A2%98%E6%BC%94%E5%8F%98"><span class="nav-number">13.</span> <span class="nav-text">12. 延伸：代码全由模型编写时的问题演变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-%E5%80%9F%E9%89%B4-DSH-%E8%AE%BE%E8%AE%A1%E9%AB%98-QPS-%E6%90%9C%E6%8E%A8-harness%EF%BC%9A%E5%B7%AE%E5%BC%82%E5%88%86%E6%9E%90%E4%B8%8E%E5%8F%96%E8%88%8D"><span class="nav-number">14.</span> <span class="nav-text">13. 借鉴 DSH 设计高 QPS 搜推 harness：差异分析与取舍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E4%B8%80%E4%B8%AA%E6%A0%B9%E5%9B%A0%EF%BC%8C%E4%B8%83%E5%A4%84%E5%B7%AE%E5%BC%82"><span class="nav-number">14.1.</span> <span class="nav-text">13.1 一个根因，七处差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-2-%E8%90%BD%E5%9C%B0%EF%BC%9A%E4%B8%A4%E5%B1%82-%E4%B8%80%E5%A5%97%E6%8E%A5%E7%BC%9D"><span class="nav-number">14.2.</span> <span class="nav-text">13.2 落地：两层 + 一套接缝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-3-%E7%BB%B4%E6%8A%A4%E6%88%90%E6%9C%AC%E5%88%86%E6%9E%90"><span class="nav-number">14.3.</span> <span class="nav-text">13.3 维护成本分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-4-%E4%B8%8A%E7%BA%BF%E5%89%8D%E9%9C%80%E6%A0%A1%E5%87%86%E7%9A%84%E4%B8%8D%E5%8F%98%E5%BC%8F"><span class="nav-number">14.4.</span> <span class="nav-text">13.4 上线前需校准的不变式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%81%E7%82%B9%E9%80%9F%E6%9F%A5%E5%8D%A1"><span class="nav-number">15.</span> <span class="nav-text">要点速查卡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">16.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ayxm"
+      src="https://github.com/Ayxm1412.png">
+  <p class="site-author-name" itemprop="name">Ayxm</p>
+  <div class="site-description" itemprop="description">Ayxm 的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Ayxm1412" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Ayxm1412" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ayxm1412.github.io/2026/10/21/deepseek-harness-cordis-architecture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/Ayxm1412.png">
+      <meta itemprop="name" content="Ayxm">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ayxm的博客">
+      <meta itemprop="description" content="Ayxm 的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="DeepSeek Harness &#x2F; Cordis 架构解析 | Ayxm的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DeepSeek Harness / Cordis 架构解析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-10-21 22:19:00 / 修改时间：23:09:46" itemprop="dateCreated datePublished" datetime="2026-10-21T22:19:00+08:00">2026-10-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="0-核心结论"><a href="#0-核心结论" class="headerlink" title="0. 核心结论"></a>0. 核心结论</h2><ol>
+<li><strong>一切皆插件</strong>：模型适配、工具、会话、沙箱，连 agent loop 本身，都是挂在同一个 <code>ctx</code> 上的插件；没有特权内核，均可从配置替换。</li>
+<li><strong>Cordis 是微内核</strong>：内核只做四件事——服务解析、注册、事件 IPC、生命周期。插件&#x3D;镜像，Fiber&#x3D;进程，注册&#x3D;可逆 effect，事件&#x3D;IPC，能力接口&#x3D;可热插拔的驱动（seam）。</li>
+<li><strong>Session Log 是一等公民</strong>：整段对话是一条 append-only 的事件日志（event sourcing），是唯一事实源；模型看到的 Surface、人看的 Transcript、todo&#x2F;goal 状态，都是从这条 log 派生的读模型。压缩只改投影，不改 log。</li>
+<li><strong>Capability Seam &#x3D; 稳定契约 + 可替换实现 + 明确消费者</strong>：更换 provider（本地↔沙箱↔远程）时，消费者代码无需修改。</li>
+<li><strong>代价</strong>：概念层叠、复杂度不消失只是转移、单进程不构成安全沙箱、provider 契约依赖约定而非强制。它面向”复杂、动态、可自进化”的 Agent 场景，并非通用解。</li>
+<li><strong>运行模型</strong>：单进程 + 单 JS 线程；多会话是 async&#x2F;await 协程，在一个事件循环上交替（并发而非并行），真并行仅出现在模型请求与子进程；共享 JS 状态无需加锁，多会话修改同一文件依赖版本乐观锁（<code>FS_STALE_VERSION</code>）。</li>
+<li><strong>搜推 harness 与通用 harness 不同</strong>：通用 harness 面向”开放式、低 QPS、长程、模型驱动”优化，搜推面向”闭形状、高 QPS、短程、时延敏感、pipeline 驱动”优化。做法是借鉴 DSH 的 seam &#x2F; 双轨 &#x2F; 配置分层，不采用微内核热插拔与热路径上的模型循环（详见第 13 节）。</li>
+</ol>
+<p>以下各节均从待解决的问题出发。</p>
+<span id="more"></span>
+
+<hr>
+<h2 id="1-问题起点：Agent-Loop-的持续膨胀"><a href="#1-问题起点：Agent-Loop-的持续膨胀" class="headerlink" title="1. 问题起点：Agent Loop 的持续膨胀"></a>1. 问题起点：Agent Loop 的持续膨胀</h2><p>传统 harness 将各类逻辑集中于一个巨型 Agent Loop 内：读文件需调用工具，工具需先启动沙箱，执行前需权限校验，token 超限需压缩上下文。每新增一项功能即向 loop 内追加代码，loop 持续膨胀、可维护性下降。</p>
+<p>DSH 的应对是<strong>微内核</strong>：将 loop 拆薄，能力下沉为插件；插件通过 service（获取能力）与 event（拦截&#x2F;协作）与内核交互。</p>
+<p><img src="/images/deepseek-harness/05-cordis-microkernel.svg" alt="D1 Cordis 微内核全景"></p>
+<p>以操作系统类比：内核只提供机制（调度、IPC、命名、资源归属），策略位于用户态服务。DSH 中”agent loop 本身也是插件”是该原则的字面实现——<strong>不存在可被直接打补丁的特权核心，扩展只能以新增插件的方式进行</strong>（<code>docs/architecture.md</code>）。</p>
+<hr>
+<h2 id="2-机制一：插件即进程"><a href="#2-机制一：插件即进程" class="headerlink" title="2. 机制一：插件即进程"></a>2. 机制一：插件即进程</h2><p>先区分两个概念：</p>
+<ul>
+<li><strong>Plugin</strong> &#x3D; 可执行镜像：函数&#x2F;类 + <code>inject</code>（依赖声明）+ <code>Config</code> + <code>provide</code>。</li>
+<li><strong>Fiber</strong> &#x3D; 该镜像的一次运行实例，即<strong>进程</strong>：持有 <code>uid</code>（PID）、<code>state</code>、<code>config</code>、<code>ctx</code>（地址空间）、<code>disposables</code>（持有的资源）。</li>
+</ul>
+<p>其生命周期对应一张进程状态图：</p>
+<p><img src="/images/deepseek-harness/06-cordis-fiber-state.svg" alt="D2 Fiber 进程生命周期"></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vendor/cordis/src/fiber.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="keyword">enum</span> <span class="title class_">FiberState</span> &#123;</span><br><span class="line">  <span class="variable constant_">PENDING</span>, <span class="variable constant_">LOADING</span>, <span class="variable constant_">ACTIVE</span>, <span class="variable constant_">FAILED</span>, <span class="variable constant_">DISPOSED</span>, <span class="variable constant_">UNLOADING</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对照 OS：<code>PENDING</code>≈阻塞（等待依赖）、<code>LOADING</code>≈创建、<code>ACTIVE</code>≈运行、<code>FAILED</code>≈崩溃、<code>UNLOADING</code>≈退出、<code>DISPOSED</code>≈终止。需注意 <code>PENDING</code> 并非”线程被挂起”，而是声明式前置条件：依赖未就绪时回调不会被调用。</p>
+<p><strong>资源释放是该设计的核心</strong>（论文称为”时间可组合性”）：每个注册都是一个可逆 effect，卸载时按<strong>逆序</strong>执行 disposer，类似 Go 的 <code>defer</code> 与 C++ 析构函数：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fiber.ts —— 卸载时逆序释放</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> disposable <span class="keyword">of</span> disposables.<span class="title function_">splice</span>(<span class="number">0</span>).<span class="title function_">reverse</span>()) &#123; <span class="comment">/* await 异步清理 */</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此编写插件时<strong>无需手写卸载逻辑</strong>：<code>ctx.on(...)</code>、<code>ctx.provide(...)</code>、<code>ctx.effect(...)</code> 均返回 disposer，fiber 卸载时统一回收，从而保证卸载后不残留副作用。</p>
+<hr>
+<h2 id="3-机制二：通信即中间件"><a href="#3-机制二：通信即中间件" class="headerlink" title="3. 机制二：通信即中间件"></a>3. 机制二：通信即中间件</h2><p>插件之间不直接调用，而是经由内核的事件总线（IPC）。五种派发模式对应五种通信语义：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>语义</th>
+<th>OS &#x2F; 中间件类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>emit</code></td>
+<td>广播，不等返回</td>
+<td>信号 &#x2F; 数据报</td>
+</tr>
+<tr>
+<td><code>parallel</code></td>
+<td>扇出，等所有</td>
+<td>scatter-gather</td>
+</tr>
+<tr>
+<td><code>serial</code></td>
+<td>有序，遇 bail 停</td>
+<td>责任链</td>
+</tr>
+<tr>
+<td><code>bail</code></td>
+<td>同步有序，第一个非空胜出</td>
+<td>解析器 &#x2F; 权限查询</td>
+</tr>
+<tr>
+<td><strong><code>waterfall</code></strong></td>
+<td>拦截器链，<code>next()</code> 委托、不调用即否决</td>
+<td><strong>filter driver &#x2F; LSM 钩子</strong></td>
+</tr>
+</tbody></table>
+<p><code>waterfall</code> 将”事件”从通知升级为<strong>流程控制</strong>：</p>
+<p><img src="/images/deepseek-harness/07-cordis-waterfall.svg" alt="D3 waterfall 拦截链"></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vendor/cordis/src/events.ts</span></span><br><span class="line"><span class="title function_">waterfall</span>(<span class="params">...args</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> cbs = <span class="variable language_">this</span>.<span class="title function_">dispatch</span>(<span class="string">&#x27;waterfall&#x27;</span>, args)</span><br><span class="line">  <span class="keyword">const</span> inner = args.<span class="title function_">pop</span>()            <span class="comment">// 最内层：内置行为</span></span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">next</span> = (<span class="params"></span>) =&gt; (cbs.<span class="title function_">shift</span>() ?? inner)(...args)</span><br><span class="line">  args.<span class="title function_">push</span>(next)</span><br><span class="line">  <span class="keyword">return</span> <span class="title function_">next</span>()                       <span class="comment">// 不调 next() = 就地否决整条链</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>DSH 的请求拦截、工具执行前后的审批 &#x2F; 沙箱 &#x2F; 护栏均挂载在这几个 waterfall 上（<code>agent/request</code>、<code>tools/pre-execute</code> 等），而 agent loop 对其存在无感知。</p>
+<hr>
+<h2 id="4-机制三：状态即事件溯源"><a href="#4-机制三：状态即事件溯源" class="headerlink" title="4. 机制三：状态即事件溯源"></a>4. 机制三：状态即事件溯源</h2><p>多数 Agent 将 Session 存储为 message list；DSH 采用不同方式——它是一条 <strong>append-only 的事件日志</strong>，是<strong>唯一事实源</strong>；模型历史由其<strong>派生</strong>，不单独存储。即软件工程中的 <strong>event sourcing</strong>。</p>
+<p><img src="/images/deepseek-harness/08-cordis-event-sourcing.svg" alt="D4 Event Sourcing 双轨迹"></p>
+<p>需区分三个<strong>不属于同一层次</strong>的概念：</p>
+<ul>
+<li><strong>Session Log</strong>：持久、append-only 的事实源（event store）。</li>
+<li><strong>Event Bus</strong>：瞬时、进程内的 IPC。<code>session/event</code> 即把”日志追加了一条”广播出去。</li>
+<li><strong>Surface</strong>：从 log 派生的一个<strong>读模型</strong>——模型实际看到的那条投影。</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// docs/subsystems/session.md</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">SurfaceEventType</span> =            <span class="comment">// 只有这 5 种事件产模型消息</span></span><br><span class="line">  | <span class="string">&#x27;system/message&#x27;</span> | <span class="string">&#x27;developer/message&#x27;</span> | <span class="string">&#x27;user/message&#x27;</span></span><br><span class="line">  | <span class="string">&#x27;assistant/message&#x27;</span> | <span class="string">&#x27;tool/result&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>每条产消息的事件带一个 <code>surfaceOp</code>：<code>append</code>（正常追加）或 <code>replace</code>（替换 surface 上的一段）。<strong>上下文压缩即一条 <code>replace</code><strong>——它仅在 Surface 层将旧消息 shadow 掉，</strong>log 中的原始事件不被删除</strong>。因此模型看到的是摘要，而回放 &#x2F; transcript 始终可获取全文。这即”双轨迹”设计，也对应 CQRS 的多读模型：不同 surface 均为同一数据源的投影。</p>
+<p>另有一条硬约束：<strong>model-visible ⟺ logged</strong>——任何进入模型请求的内容都必须能从 log 重建。</p>
+<hr>
+<h2 id="5-机制四：能力接缝（Capability-Seam）"><a href="#5-机制四：能力接缝（Capability-Seam）" class="headerlink" title="5. 机制四：能力接缝（Capability Seam）"></a>5. 机制四：能力接缝（Capability Seam）</h2><p>将 Seam 理解为”接口”只说对了一半。Seam 是<strong>由三个角色组成的完整能力边界</strong>：</p>
+<ul>
+<li><strong>Service Definition</strong>：拥有 <code>ctx.&lt;key&gt;</code> 与词汇类型的 Cordis <code>Service</code>（是<strong>抽象类</strong>，不是 TS <code>interface</code>），<strong>标准由它定义</strong>。</li>
+<li><strong>Provider</strong>：真正实现（如 <code>ctx.fs</code> 的 <code>fs-local</code> &#x2F; <code>fs-sandbox</code> &#x2F; <code>fs-ssh</code>）。</li>
+<li><strong>Consumer</strong>：通过 <code>inject</code> 该 key 使用（如 <code>tool-fs</code>）。</li>
+</ul>
+<p><img src="/images/deepseek-harness/11-cordis-capability-seam.svg" alt="D7 Capability Seam 三角色"></p>
+<p>插件相互独立，其交互与调用决策通过两条内核中介的通道完成（service <code>inject</code>&#x2F;<code>provide</code>、events），且<strong>读取 <code>ctx.X</code> 而未在 <code>inject</code> 中声明会直接抛错</strong>——即能力式访问控制（类似 seL4 的 capability）：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vendor/cordis/src/reflect.ts</span></span><br><span class="line"><span class="keyword">const</span> error = <span class="keyword">new</span> <span class="title class_">Error</span>(<span class="string">`cannot get property &quot;<span class="subst">$&#123;prop&#125;</span>&quot; without inject`</span>)</span><br></pre></td></tr></table></figure>
+
+<p>调用决策被拆分为四方：<strong>Consumer</strong> 决定要什么（依赖 key，不依赖具体实现）；<strong>内核</strong>决定使用哪个 provider（按 scope + 激活态解析）；<strong>Provider</strong> 决定如何实现；<strong>waterfall 监听器</strong>决定是否放行 &#x2F; 改写（审批、沙箱即由此插入）。不存在插件之间的硬连线。</p>
+<p>关于”标准集合”的来源：它不是手工维护的注册表，而由 <code>scripts/gen-doc-graphs.ts</code> <strong>扫描 Cordis 声明自动生成</strong> <code>docs/capability-seams.md</code> 汇总表。core 脊柱（<code>sessions</code>&#x2F;<code>tools</code>&#x2F;<code>llm</code>&#x2F;<code>agents</code>）因被广泛 inject，成为事实上不可替代的标准。</p>
+<hr>
+<h2 id="6-机制的实际运行：一次完整对话"><a href="#6-机制的实际运行：一次完整对话" class="headerlink" title="6. 机制的实际运行：一次完整对话"></a>6. 机制的实际运行：一次完整对话</h2><p>示例：在 Web 端输入”修复 foo.ts 的 bug 并运行 pnpm test”。</p>
+<p><img src="/images/deepseek-harness/09-cordis-conversation-flow.svg" alt="D5 一次真实对话的数据流"></p>
+<p>整体链路：客户端 →(RPC)→ <code>SessionController</code> 恢复 Agent → <code>AgentLoop</code> 开启 turn、向 log append <code>turn/start</code> + <code>user/message</code> → 组装 prompt+tools、经 <code>ctx.llm</code> 流式请求（<code>agent/assistant-stream</code> 是<strong>瞬时</strong>的打字机流，不入 log）→ settled 后 append <code>assistant/message</code>（<strong>持久</strong>，内嵌流）→ 模型需调工具则 append <code>tool/call</code>、经 <code>tools/*</code> waterfall（审批 &#x2F; 沙箱在此拦截）→ 经 <code>ctx.fs</code> &#x2F; <code>ctx.shell</code> seam 执行 → append <code>tool/result</code> → 每次 append 均 emit <code>session/event</code>，推给持久化（异步写 JSONL）、投影、客户端渲染 → 直至 <code>turn/end</code>。</p>
+<p><strong>Desktop 与 Web 的机制完全一致</strong>，差异仅在载体：Electron 主进程启动 Host、运行同一套 Web 应用，通过 Node IPC 传递启动 &#x2F; 就绪 &#x2F; 关闭信号。</p>
+<p>数据形态的变化可由下述链路概括：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">用户文本 → user/message(持久) → surface node → 派生 Message → 模型请求</span><br><span class="line">模型流   → assistant-stream(瞬时) → assistant/message(持久,内嵌流) → surface node</span><br><span class="line">工具     → tool/call(持久) → seam/event 执行 → tool/result(持久,+meta) → surface node + UI 卡片</span><br><span class="line">压缩     → surface 上 replace(投影级)，log 不变</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="7-插件热插拔"><a href="#7-插件热插拔" class="headerlink" title="7. 插件热插拔"></a>7. 插件热插拔</h2><p>由于一切皆 effect 且依赖为声明式，插件可在运行时替换。provider 更换（产生新 <code>uid</code>）后，内核通知依赖它的 consumer；consumer 的 <strong>epoch</strong>（由依赖提供方 uid 组合成的指纹）随之变化，触发其自动卸载并重载：</p>
+<p><img src="/images/deepseek-harness/10-cordis-plugin-reload.svg" alt="D6 插件热插拔级联"></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fiber.ts（简化）—— epoch = 依赖提供方 uid 的指纹</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> name <span class="keyword">of</span> <span class="title class_">Object</span>.<span class="title function_">keys</span>(<span class="variable language_">this</span>.<span class="property">inject</span>)) &#123;</span><br><span class="line">  <span class="keyword">const</span> impl = <span class="variable language_">this</span>.<span class="property">_store</span>[name]</span><br><span class="line">  <span class="keyword">if</span> (!impl) &#123; epoch = <span class="variable constant_">INACTIVE</span>; <span class="keyword">break</span> &#125;</span><br><span class="line">  epoch += <span class="string">&#x27;:&#x27;</span> + impl.<span class="property">fiber</span>.<span class="property">uid</span>    <span class="comment">// provider 换 uid → epoch 变 → 依赖它的重载</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这即论文所述的”空间可组合性”：依赖关系在运行时被持续维护，环境变化时待激活 &#x2F; 待移除的插件由框架自动判定，无需手工编排启动顺序。HMR 修改文件、<code>cordis.yml</code> 修改配置均经由该路径生效。</p>
+<hr>
+<h2 id="8-横向对比：一等公民的差异"><a href="#8-横向对比：一等公民的差异" class="headerlink" title="8. 横向对比：一等公民的差异"></a>8. 横向对比：一等公民的差异</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>LangGraph</th>
+<th>Deep Agents</th>
+<th>DSH &#x2F; Cordis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一等公民</td>
+<td><strong>State 快照</strong></td>
+<td>State（继承 LG）</td>
+<td><strong>Session Log 事件流</strong></td>
+</tr>
+<tr>
+<td>持久化</td>
+<td>Checkpointer 存每步 state 快照，可 time-travel</td>
+<td>同 LG；文件可进 state 被 checkpoint</td>
+<td>Event sourcing：log 是源，surface 派生</td>
+</tr>
+<tr>
+<td>agent 是</td>
+<td>用户定义的图（nodes + reducers）</td>
+<td>LG 图 + 深度 agent 配方</td>
+<td>一个插件：fold log → 调模型 → append</td>
+</tr>
+<tr>
+<td>本地↔沙箱</td>
+<td>交给工具层</td>
+<td><code>BackendProtocol</code>(ls&#x2F;read&#x2F;write&#x2F;edit&#x2F;glob&#x2F;grep) + Sandbox backend + Composite 路由</td>
+<td>capability seam（fs&#x2F;shell&#x2F;subprocess&#x2F;sandbox）</td>
+</tr>
+</tbody></table>
+<p>概括：**LangGraph 属于”状态快照溯源”，DSH 属于”事件溯源”**。”session log 是一等公民、agent 仅是处理器”这一判断在 DSH 中近乎字面成立；在 LangGraph 中对应的表述是”state 是一等公民”。</p>
+<p>一处值得注意的取舍：Deep Agents 的 <code>StateBackend</code> 将虚拟文件纳入 checkpoint，time-travel 可连同文件状态一起回滚；DSH 的 fs 是带副作用的 seam，log 中仅记录工具事件，重放<strong>不恢复</strong>外部磁盘状态——即”外部副作用无法消除”的固有问题。</p>
+<hr>
+<h2 id="9-深入-ctx：被-Proxy-包装的服务容器"><a href="#9-深入-ctx：被-Proxy-包装的服务容器" class="headerlink" title="9. 深入 ctx：被 Proxy 包装的服务容器"></a>9. 深入 ctx：被 Proxy 包装的服务容器</h2><p>前文将 ctx 简述为”插件的工具箱”。本节对其展开分析——它是理解整套框架的关键。</p>
+<p><strong>ctx 的本质</strong>是一个被 JS <code>Proxy</code> 包装的 <code>Context</code> 对象。构造函数最终 <code>return self</code>（self 为 proxy），因此外部获得的 ctx 并非普通对象，而是每次属性读取都经过拦截处理的对象：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// vendor/cordis/src/context.ts</span></span><br><span class="line"><span class="title function_">constructor</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="variable language_">self</span> = <span class="keyword">new</span> <span class="title class_">Proxy</span>(<span class="variable language_">this</span>, <span class="title class_">ReflectService</span>.<span class="property">handler</span>)  <span class="comment">// 拦截器</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">root</span> = <span class="variable language_">self</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">events</span>  = <span class="keyword">new</span> <span class="title class_">EventsService</span>(<span class="variable language_">self</span>)   <span class="comment">// 4 个内核服务</span></span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">reflect</span> = <span class="keyword">new</span> <span class="title class_">ReflectService</span>(<span class="variable language_">self</span>)</span><br><span class="line">  <span class="comment">// registry / logger ...</span></span><br><span class="line">  <span class="keyword">return</span> <span class="variable language_">self</span>                              <span class="comment">// 返回 proxy，不是 this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>每个插件有自己的 ctx，但共享同一个 root。</strong> 空间关系：</p>
+<p><img src="/images/deepseek-harness/12-cordis-ctx-model.svg" alt="D8 ctx 空间模型"></p>
+<ul>
+<li>root ctx 持有两样<strong>全局共享</strong>的资源：<strong>服务登记册</strong>（<code>reflect.store</code>：记录谁 provide 了什么）与<strong>事件总线</strong>（<code>events</code>）。</li>
+<li>每个插件的 ctx 由 root 派生（原型继承），各自持有一个 fiber；彼此隔离，但共享同一 root。</li>
+<li>因此插件间通信并非”挂载在某个 ctx 上”，两条路径均经过 root：<strong>服务</strong>（provide&#x2F;inject，登记册中点对点）与<strong>事件</strong>（emit&#x2F;on，总线广播）。</li>
+</ul>
+<p><strong>读取 <code>ctx.llm</code> 并非简单取字段</strong>，而是一次”服务解析”：拦截器在读取时查询提供方、激活态与调用资格：</p>
+<p><img src="/images/deepseek-harness/13-cordis-service-resolution.svg" alt="D9 服务解析流程"></p>
+<p>静态字段无法满足这些需求：值会随热插拔过期、无法做 inject 授权、无法按作用域解析、无法被拦截。因此每次读取均即时解析（这也是其类似”系统调用”的原因：所有访问收敛到一个可施加统一策略的入口）。</p>
+<p><strong>ctx 上没有固定的字段清单。</strong> 仅少数内核自带成员（<code>on/emit/effect/provide/inject/plugin/get/set</code>，来自四个内核服务的 mixin）；其余 <code>llm/tools/web/sessions/fs…</code> <strong>均由插件在运行时注入</strong>。IDE 中观察到 ctx”字段众多”是表象——它由上百个包通过声明合并拼接而成：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// packages/web/web/src/index.ts —— 一个包如何把 ctx.web 加上去</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">WebRuntime</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Service</span> &#123; <span class="comment">/* 构造时 ctx.reflect.provide(&#x27;web&#x27;, this) */</span> &#125;</span><br><span class="line"><span class="keyword">declare</span> <span class="variable language_">module</span> <span class="string">&#x27;@deepseek-ai/cordis&#x27;</span> &#123;</span><br><span class="line">  <span class="keyword">interface</span> <span class="title class_">Context</span> &#123; <span class="attr">web</span>: <span class="title class_">WebRuntime</span> &#125;   <span class="comment">// 类型层：声明合并</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>若未加载 <code>dsh-web</code>，则 <code>ctx.web</code> 不存在，读取时抛出 <code>cannot get property &quot;web&quot; without inject</code>。</p>
+<p><strong>多个插件提供同一 key 的处理</strong>：同一作用域内重名会在<strong>加载时抛错</strong>，不存在歧义解析。需要多种实现时，采用以下三条路径：</p>
+<p><img src="/images/deepseek-harness/14-cordis-provide-routes.svg" alt="D10 提供能力的三条路"></p>
+<p>“消费者获得的引用一定有效”由反应式生命周期保证：未就绪不激活（停留 PENDING）、失效即抛错、provider 更换时消费者自动重载（见 §7）、拆除时等待依赖方 settle。<strong>框架保证结构性正确（唯一性&#x2F;解析&#x2F;生命周期），但不保证 provider 的语义正确</strong>——后者依赖契约与测试。</p>
+<p>上述机制可对应若干经典设计模式：</p>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>模式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ctx 被 Proxy 包着、读写被拦截</td>
+<td>代理模式 (Proxy)</td>
+</tr>
+<tr>
+<td>读 <code>ctx.key</code> 去全局表按名查服务</td>
+<td>服务定位器 (Service Locator)</td>
+</tr>
+<tr>
+<td><code>inject</code> 声明依赖、框架等齐了才激活</td>
+<td>依赖注入 &#x2F; IoC 容器</td>
+</tr>
+<tr>
+<td><code>ctx.on/emit</code> 广播</td>
+<td>观察者 (Observer) + 事件总线</td>
+</tr>
+<tr>
+<td><code>waterfall</code> 的 <code>next()</code> 链</td>
+<td>责任链 (Chain of Responsibility)</td>
+</tr>
+<tr>
+<td>ctx 把多子系统统一成一个入口</td>
+<td>门面 (Facade)</td>
+</tr>
+<tr>
+<td>effect&#x2F;disposer 逆序释放</td>
+<td>RAII &#x2F; Disposable</td>
+</tr>
+</tbody></table>
+<p>严格而言 <code>ctx.llm</code> 属于 <strong>Service Locator</strong>（按 key 主动获取），而非纯 DI（由容器注入引用）；Cordis 兼具两者：声明与激活具有 DI 容器特征，取值具有 Locator 特征。</p>
+<p><strong>插件开发约束</strong>（详见 §5 与 cookbook）：先以 <code>inject</code> 声明依赖；优先注册进已有 seam；所有贡献包进 <code>effect</code>（自动回收）；不将服务引用缓存到激活周期之外；可调参数置于 <code>Config</code> 而非硬编码；waterfall 监听器必须调用 <code>next()</code>。</p>
+<hr>
+<h2 id="10-运行模型：单进程单线程，多会话以协程方式交替"><a href="#10-运行模型：单进程单线程，多会话以协程方式交替" class="headerlink" title="10. 运行模型：单进程单线程，多会话以协程方式交替"></a>10. 运行模型：单进程单线程，多会话以协程方式交替</h2><p>一个常见的直觉是”多个会话对应多个线程”，该直觉不成立。</p>
+<p>整个 dsh 运行在<strong>一个 OS 进程、一个 JS 线程（事件循环）</strong>上。直接证据：<code>packages/core</code>（session &#x2F; agent &#x2F; agent-loop 所在）中<strong>不存在任何 <code>worker_threads</code> &#x2F; <code>new Worker</code><strong>。真实线程与进程仅出现在</strong>边缘</strong>（见下文）。</p>
+<p>多会话的”同时”推进依赖 <strong>async&#x2F;await 协程</strong>：</p>
+<p><img src="/images/deepseek-harness/15-cordis-runtime-model.svg" alt="D9 单线程 + 多会话协程运行模型"></p>
+<ul>
+<li>一个会话的 turn 运行到 <code>await</code>（等待模型返回、子进程、文件 I&#x2F;O）即<strong>让出线程</strong>，由另一个会话继续执行；模型的流返回后它再恢复。<strong>任意时刻只有一段 JS 在执行</strong>——因此是<strong>并发（交替），而非并行（同时）</strong>。</li>
+<li>类比：Python 的 <code>asyncio</code>，或去除多线程 runtime 的 Go goroutine（所有协程固定在一个 OS 线程上）。</li>
+<li>命名注意：Cordis 的 <strong>“Fiber” 不是协程</strong>，它是插件的生命周期对象（uid &#x2F; state &#x2F; disposables）；协程性来自插件代码中的 <code>async/await</code>。</li>
+</ul>
+<p><strong>真正的并行发生在 JS 线程之外</strong>：三个会话同时请求模型即三个 HTTP 请求并发在途（socket 由 libuv &#x2F; OS 管理）；会话 A 与会话 B 各自执行 <code>bash</code> 即两个真实 OS 子进程在不同核上并行。JS 本身单线程，但其等待的外部操作是并行的。真实线程 &#x2F; 进程仅存在于这些边缘：<code>subprocess</code> &#x2F; <code>terminal</code> &#x2F; <code>ssh</code> 启动的子进程、inspector 的 Worker、Electron 桌面的多进程壳。</p>
+<p><strong>单线程协作的主要收益：无需加锁。</strong> 共享的 JS 状态（session 表、注册表、投影缓存）不会被两段 JS 同时修改——因为不存在两段 JS 同时执行。代价是：任何<strong>同步阻塞</strong>的长循环（不 <code>await</code>）会阻塞进程内所有会话；因此重计算均交由 <code>await</code>（异步）或子进程承担。</p>
+<p><strong>冷会话与活会话不同</strong>：会话列表中”打开”100 个并不意味着 100 个活 Agent 占用线程。冷会话仅是磁盘上的 log（<code>ctx.sessionController</code> 的 <code>inspect()</code> &#x2F; <code>page()</code> 可<strong>冷读</strong>而不激活 Agent）；仅在调用 <code>prompt()</code> &#x2F; <code>resolveAgent()</code> 时才<strong>恢复一个活 Agent</strong> 进入线程。因此挂载大量历史会话不会造成阻塞。</p>
+<h3 id="两个会话同时修改同一文件"><a href="#两个会话同时修改同一文件" class="headerlink" title="两个会话同时修改同一文件"></a>两个会话同时修改同一文件</h3><p>这是单线程<strong>无法解决</strong>的问题——文件系统是<strong>外部共享可变状态</strong>，位于 JS 线程控制之外。DSH 不加锁，而是在 <code>ctx.fs</code> seam 内采用<strong>乐观并发控制</strong>（即数据库领域的 optimistic lock）（<code>docs/subsystems/filesystem.md</code>）：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ctx.fs 全为 async（await 处让出线程）；写/改带版本守卫</span></span><br><span class="line"><span class="keyword">abstract</span> <span class="title function_">writeText</span>(target, content, <span class="attr">expected</span>?: <span class="title class_">FsWriteIntent</span>, signal?, sandboxPolicy?): <span class="title class_">Promise</span>&lt;<span class="title class_">FsWriteOutcome</span>&gt;</span><br><span class="line"><span class="comment">// expected = &#123; kind: &#x27;replaceIfVersion&#x27;, version &#125; → 版本不匹配则抛 FS_STALE_VERSION</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每个文件持有一个版本令牌 <code>FsVersion</code>；</li>
+<li>每个<strong>会话</strong>各自记录其观察到的文件版本（<code>WeakMap&lt;owner = agent.session, …&gt;</code>，<strong>按会话隔离</strong>）；</li>
+<li>写 &#x2F; 改默认带 <code>replaceIfVersion</code> 守卫，版本不匹配时报 <code>FS_STALE_VERSION</code> 并<strong>拒绝覆盖</strong>（而非静默 clobber）。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">会话A: read foo.ts            → 观察到 version = v1</span><br><span class="line">会话B: read foo.ts            → 也 v1</span><br><span class="line">会话A: writeText(expected=v1) → 成功，文件变 v2</span><br><span class="line">会话B: writeText(expected=v1) → FS_STALE_VERSION（已是 v2）→ 被拒，需重读</span><br></pre></td></tr></table></figure>
+
+<p>单个 write &#x2F; edit 本身是<strong>原子</strong>的（不会出现半写文件）。若需完全避免冲突，则通过 seam 做物理隔离：每会话独立 <strong>working directory</strong>、<strong>sandbox</strong> 围栏（越界写报 <code>FS_SANDBOX_DENIED</code>）、<strong>fs-ssh</strong> 推送至远程、<strong>git worktree</strong> 各分配一个工作树——即更换 provider &#x2F; 作用域，而非依赖线程。</p>
+<blockquote>
+<p>小结：<strong>单线程保证”DSH 内部共享状态无需加锁”；外部文件系统这类共享可变状态，依赖”异步不阻塞 + 原子写 + 版本乐观锁 + 作用域隔离”，而非”一个修改、另一个等待”。</strong></p>
+</blockquote>
+<hr>
+<h2 id="11-局限与代价"><a href="#11-局限与代价" class="headerlink" title="11. 局限与代价"></a>11. 局限与代价</h2><ul>
+<li><strong>复杂度未消失，只是转移</strong>：概念层叠（Service&#x2F;Effect&#x2F;Seam&#x2F;Surface&#x2F;Bundle&#x2F;Profile&#x2F;Patch…），DSH 自身需依赖大量 <code>verify-*</code> gate 与文档预算才能维持可控。</li>
+<li><strong>单进程，Scope 只是逻辑隔离，不是安全沙箱</strong>：所有 context 共享一个 JS 堆；真隔离需依赖 subprocess &#x2F; sandbox &#x2F; ssh seam 将执行推到进程外。</li>
+<li><strong>一切皆事件 + Proxy 解析</strong>：热路径存在开销，栈追踪被 proxy 干扰，”跳定义”无法定位运行时真正绑定的实现。</li>
+<li><strong>生命周期正确性极难</strong>：<code>vendor/README.md</code> 的二十多条本地修改中有多条用于修复 fiber 可重入释放的缺陷——上游框架自身亦曾遗漏。</li>
+<li><strong>core 亦为插件，任何插件均可修改，易产生耦合</strong>；<strong>provider 契约依赖约定，冲突在运行时才暴露</strong>。</li>
+<li><strong>非通用协议</strong>：属于 Harness 内部私有定义，生态尚早期（不同于已跨厂商的 MCP）。</li>
+</ul>
+<hr>
+<h2 id="12-延伸：代码全由模型编写时的问题演变"><a href="#12-延伸：代码全由模型编写时的问题演变" class="headerlink" title="12. 延伸：代码全由模型编写时的问题演变"></a>12. 延伸：代码全由模型编写时的问题演变</h2><p>判断：**瓶颈从”编写代码的成本”转移为”信任代码的成本”**，上述局限可分为三类——</p>
+<ul>
+<li><strong>可溶解</strong>（本质是人类认知与手写成本）：概念爆炸、抽象成本、事件图谱难查、语法契约。由于 Cordis 是<strong>机器可读</strong>的（typed key、声明式 inject、生成的目录、机械化 gate），重契约框架相比依赖隐性知识的框架更适配模型作为作者。</li>
+<li><strong>不溶解甚至加剧</strong>（结构性 &#x2F; 物理性）：单进程隔离（模型自主 mount 插件时<strong>更</strong>需要不可绕过的沙箱）、proxy &#x2F; 事件的性能开销、语义正确性（类型≠行为）、涌现行为（N 个模型编写的 listener 挂在同一条 waterfall 上）。</li>
+<li><strong>发生变形</strong>：冻结且加固的内核是热插拔的前提，但同时构成<strong>固定上限</strong>——模型能力再强也无法突破框架自身的表达力边界。</li>
+</ul>
+<p>概括：<strong>将作者替换为更强的个体并不能解决信任 &#x2F; 验证 &#x2F; 隔离问题</strong>；作者变强只意味着代码产出速度快于验证速度——即前述熵增在新前提下由副作用升级为主要矛盾。</p>
+<p>这一点与第 4 节相呼应：使”模型自主修改自身”可信的唯一途径是系统<strong>可重放、可审计</strong>——即那条 log。因此 <strong>“log 是一等公民”与”模型编写一切代码”是同一前提下的两个推论</strong>：当作者是无法完全验证的模型时，append-only、可重放的 log 是唯一的信任锚。</p>
+<hr>
+<h2 id="13-借鉴-DSH-设计高-QPS-搜推-harness：差异分析与取舍"><a href="#13-借鉴-DSH-设计高-QPS-搜推-harness：差异分析与取舍" class="headerlink" title="13. 借鉴 DSH 设计高 QPS 搜推 harness：差异分析与取舍"></a>13. 借鉴 DSH 设计高 QPS 搜推 harness：差异分析与取舍</h2><p>前 12 节讨论的是 DSH 这套<strong>通用</strong> agent harness。将其应用于电商搜推这类在线高 QPS 场景时会发现，其中一部分设计是为另一类问题付出的成本。本节先厘清通用 harness 与搜推 harness 的差异（差异 → 原因 → 解法），再给出一个可落地的两层设计。</p>
+<h3 id="13-1-一个根因，七处差异"><a href="#13-1-一个根因，七处差异" class="headerlink" title="13.1 一个根因，七处差异"></a>13.1 一个根因，七处差异</h3><p>所有差异均源于同一组坐标轴上的定位不同：</p>
+<table>
+<thead>
+<tr>
+<th>坐标轴</th>
+<th>通用 harness（DSH）</th>
+<th>搜推 harness（在线）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QPS</td>
+<td>人工交互量级：一个会话一次请求</td>
+<td>千~万级 &#x2F; 秒</td>
+</tr>
+<tr>
+<td>时延预算</td>
+<td>分钟级可接受</td>
+<td>p99 几百 ms ~ 几秒，硬预算</td>
+</tr>
+<tr>
+<td>单程时长</td>
+<td>长：一个 session 运行较久</td>
+<td>短：一次请求一次响应</td>
+</tr>
+<tr>
+<td>下一步谁定</td>
+<td>模型（ReAct &#x2F; TAO 循环）</td>
+<td>流程（召回→排序是已知形状）</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>会话级、长存、需可重放</td>
+<td>请求级无状态；多轮仅为一个小 surface</td>
+</tr>
+<tr>
+<td>出错代价</td>
+<td>不可逆动作（删文件、push）</td>
+<td>只读操作：风险为结果质量、时延超预算与推理成本</td>
+</tr>
+<tr>
+<td>组件空间</td>
+<td>开放、持续变化</td>
+<td>封闭、已知、部署期才变化</td>
+</tr>
+</tbody></table>
+<p>根因概括：<strong>DSH 面向”开放式、低 QPS、长程、正确性关键、模型驱动”优化；搜推面向”闭形状、高 QPS、短程、时延关键、pipeline 驱动”优化。</strong> 若按错误的问题类型选型，将承担不适配的全部成本。</p>
+<p>七处差异及其原因与解法：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>维度</th>
+<th>通用 harness</th>
+<th>搜推 harness</th>
+<th>原因</th>
+<th>解法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>谁驱动循环</td>
+<td>模型每步决策，loop 围绕不可预测的模型推进</td>
+<td>~95% 走固定 pipeline</td>
+<td>编码任务的下一步取决于运行时读取到的内容，事先未知；搜索的下一步（检索流程）是已知形状。模型驱动循环提供的灵活性在该场景无收益，而引入的时延不可接受</td>
+<td>快路径 &#x3D; 固定 LangGraph DAG（编译一次、无循环）；模型只出现在有界点（重排&#x2F;合成&#x2F;意图）；开放式 query 才进入 agentic 循环</td>
+</tr>
+<tr>
+<td>2</td>
+<td>状态</td>
+<td>Session Log 一等公民、append-only、长存</td>
+<td>请求无状态；多轮 &#x3D; Redis 中带 TTL 的小 surface</td>
+<td>DSH 的 log 使长时、高成本、难复现的运行可重放并可喂训练，其成本被低 QPS 摊薄；搜推场景每请求写全量 log 收益低，成本却随 QPS 放大（写放大）</td>
+<td>双轨：Surface（小、同步、Redis、TTL）供模型与多轮；Trace（全、异步、Kafka&#x2F;OTel）供观测与训练，离开热路径</td>
+</tr>
+<tr>
+<td>3</td>
+<td>时延模型</td>
+<td>无硬预算，recursion_limit 仅作安全网</td>
+<td>p99 硬预算</td>
+<td>交互式人工等待与受 SLA 约束的在线流量对时延的要求不同</td>
+<td>两层 gate + 硬上限（轮次&#x2F;时延&#x2F;token）+ 达到上限时降级（返回部分最优结果 + 继续入口）+ 缓存将计算移出热路径</td>
+</tr>
+<tr>
+<td>4</td>
+<td>智能在哪</td>
+<td>单一大模型承担全部任务</td>
+<td>模型金字塔 + 大量非模型算力</td>
+<td>百万级商品排序是表示学习问题，小模型 + ANN 索引的成本比 LLM 逐条读取低数个量级；QPS 也禁止每请求调用大模型</td>
+<td>LLMProvider 接缝多 profile（快路径小模型、agentic 大模型）；召回&#x2F;排序作为非 LLM 服务挂在接缝后；多级缓存进一步跳过这些调用</td>
+</tr>
+<tr>
+<td>5</td>
+<td>扩展模型</td>
+<td>一切皆插件、热插拔、可逆 effect、运行时自改</td>
+<td>少量固定 seam + 配置选择</td>
+<td>DSH 的插件机制为开放工具空间与运行期组合付出成本；搜推的组件空间封闭、变更发生在部署期。高 QPS 下运行时热插拔仅增加风险（负载中加载缺陷插件）而无收益</td>
+<td>借 seam（Definition&#x2F;Provider&#x2F;Consumer）与 Bundle&#x2F;Profile&#x2F;Patch 的配置分层，弃微内核与热插拔；换实现 &#x3D; 部署期改配置</td>
+</tr>
+<tr>
+<td>6</td>
+<td>失败模式 &#x2F; guard</td>
+<td>权限 waterfall，拦截不可逆动作</td>
+<td>预算 &#x2F; 质量 gate；操作只读、无不可逆动作</td>
+<td>风险面不同：通用 harness 防护文件系统与外部世界的不可逆操作；搜推 harness 防护 SLA 与推理成本</td>
+<td>以 budget-waterfall 替代 permission-waterfall（时延&#x2F;token&#x2F;轮次&#x2F;成本上限 + 降级阶梯），并以 Trace 支撑质量监控（误判率、排序指标）</td>
+</tr>
+<tr>
+<td>7</td>
+<td>并发模型</td>
+<td>单进程单线程协程</td>
+<td>水平无状态副本</td>
+<td>人工交互量级下单事件循环足够；万级 QPS 下不足</td>
+<td>快路径无状态副本 + LB；状态外置 Redis；唯一有状态的 agentic checkpointer 也外置，任意副本可续</td>
+</tr>
+</tbody></table>
+<p><strong>借鉴与舍弃清单：</strong></p>
+<ul>
+<li><strong>借</strong>：Capability Seam（稳定契约 + 可换实现）、双轨 &#x2F; 事件溯源（但仅异步、仅用于训练与观测）、Bundle&#x2F;Profile&#x2F;Patch 的配置分层、waterfall 作为”预算拦截链”。</li>
+<li><strong>弃</strong>：微内核与热插拔、热路径上的模型驱动循环、进程内 append-only session log、单进程并发模型。</li>
+</ul>
+<h3 id="13-2-落地：两层-一套接缝"><a href="#13-2-落地：两层-一套接缝" class="headerlink" title="13.2 落地：两层 + 一套接缝"></a>13.2 落地：两层 + 一套接缝</h3><p><img src="/images/deepseek-harness/16-search-harness-two-tier.svg" alt="D16 高 QPS 搜推两层 harness"></p>
+<p>四项设计决定：</p>
+<ol>
+<li><strong>Agentic 走 SSE 流式 + 硬上限</strong>（轮次&#x2F;时延&#x2F;token），达到上限时不报错而是降级，返回当前最优的部分结果并提供”继续”入口。</li>
+<li><strong>模型自托管 vLLM&#x2F;SGLang</strong>，隔一层 OpenAI 兼容的 LLMProvider 接缝，后端可换。</li>
+<li><strong>两层都用 LangGraph</strong>（技术栈一致），但快路径启动时编译一次、<strong>不挂 checkpointer</strong>（无状态、可水平扩、热路径不付 checkpoint I&#x2F;O）；agentic 挂 Redis 后端 checkpointer 做多步可恢复。同框架、两套 config。</li>
+<li><strong>缓存中间产物</strong>：L1 结果 &#x2F; L2 召回集 &#x2F; L3 排序 + 向量库（Milvus&#x2F;Qdrant）。依据是”召回与排序对 (query, 目录版本) 是纯函数”，因此 L1 未命中时仍可命中 L2&#x2F;L3，仅需重做成本最低的合成步骤。</li>
+</ol>
+<p>开源无锁定：Redis 协议（Valkey&#x2F;KeyDB 等兼容实现均可）、OpenAI 兼容端点、OTel、Milvus&#x2F;Qdrant、Kafka、FastAPI&#x2F;Ray Serve；配置采用版本化 YAML&#x2F;etcd，不依赖厂商专有 API。</p>
+<h3 id="13-3-维护成本分析"><a href="#13-3-维护成本分析" class="headerlink" title="13.3 维护成本分析"></a>13.3 维护成本分析</h3><ul>
+<li><strong>一套接缝、两个调用方</strong>：修改 LLM&#x2F;缓存&#x2F;Trace 接缝一次，两层同时受益——seam 的复用收益。</li>
+<li><strong>快路径是固定 DAG</strong>：易于推理、测试与快照；唯一含循环的是 agentic 层，即唯一需要重 guardrail 的位置，影响范围被限制在该层。</li>
+<li><strong>阈值 &#x2F; TTL 置于配置而非代码</strong>：调整分流与缓存参数无需发布。</li>
+<li><strong>Trace 同时产出训练与评估数据</strong>：后续改进 Router 分类器或小模型属于数据问题而非代码问题。</li>
+</ul>
+<h3 id="13-4-上线前需校准的不变式"><a href="#13-4-上线前需校准的不变式" class="headerlink" title="13.4 上线前需校准的不变式"></a>13.4 上线前需校准的不变式</h3><ol>
+<li><strong>Router 误判</strong>：复杂 query 被错分至快路径会在无告警的情况下返回低质量结果。需引入低成本置信度、兜底策略与误判率监控，并以 Trace 回放校准 <del>95&#x2F;</del>5 的分流假设。</li>
+<li><strong>中间缓存失效</strong>：召回&#x2F;排序依赖目录版本，cache key 必须携带版本号，否则将返回过期数据——这是多级缓存的典型失效模式。</li>
+<li><strong>Redis 职责分离</strong>：Surface 与缓存逻辑上分 DB &#x2F; 分集群，避免缓存淘汰策略误删会话态。</li>
+<li><strong>“快路径无环、无 checkpointer”不变式</strong>：以 config 约束加一条单测断言（图无环、无 checkpointer）保证，防止其演变为 agentic 循环而超出时延预算。</li>
+</ol>
+<hr>
+<h2 id="要点速查卡"><a href="#要点速查卡" class="headerlink" title="要点速查卡"></a>要点速查卡</h2><ul>
+<li>微内核：内核 &#x3D; 解析 &#x2F; 注册 &#x2F; IPC &#x2F; 生命周期，其余皆插件，无特权核心。</li>
+<li>插件 &#x3D; 镜像，Fiber &#x3D; 进程，注册 &#x3D; 可逆 effect（逆序释放），事件 &#x3D; IPC。</li>
+<li>waterfall &#x3D; 拦截器链：<code>next()</code> 委托，不调用即否决。</li>
+<li>Session Log &#x3D; 唯一事实源（event sourcing）；Surface &#x2F; Transcript &#x2F; Projection &#x3D; 派生读模型；压缩只改 Surface。</li>
+<li><strong>Bus 瞬时、Log 持久、Surface 是投影——三者属于不同层次，不应混淆。</strong></li>
+<li>Seam &#x3D; Definition（定标准）+ Provider（可换）+ Consumer（inject key）；内核按 scope 解析，policy 由 waterfall 插入。</li>
+<li>ctx &#x3D; 被 Proxy 包装的服务容器：读 <code>ctx.xxx</code> 是即时解析（服务解析），字段由各插件 <code>provide</code> 与声明合并动态注入；同作用域重名即报错。它是 Service Locator + Proxy，不是普通对象。</li>
+<li>运行模型：单进程 + 单 JS 线程 + 协程并发（await 处交替）；真并行仅在模型请求 &#x2F; 子进程；共享 JS 状态无需加锁；多会话修改同一文件用乐观锁（<code>FsVersion</code> → <code>FS_STALE_VERSION</code>）+ 作用域隔离，不加锁。</li>
+<li>对比：LangGraph &#x3D; 状态快照，DSH &#x3D; 事件溯源。</li>
+<li>搜推 harness：两层（Router → 快路径 &#x2F; Agentic）+ 一套开源接缝；借 seam &#x2F; 双轨 &#x2F; 配置分层，弃微内核热插拔与热路径模型循环；快路径固定 DAG 无 checkpointer，Agentic SSE + 硬上限。</li>
+<li>局限：复杂度转移、非安全沙箱、契约依赖约定；本质是为”自进化”预付的成本。</li>
+</ul>
+<hr>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>论文 <em>A Programming Paradigm for Spatiotemporal Composability</em>（Cordis）</li>
+<li>仓库文档：<code>docs/architecture.md</code>、<code>docs/cordis-primer.md</code>、<code>docs/subsystems/session.md</code>、<code>docs/capability-seams.md</code>、<code>docs/glossary.md</code></li>
+<li>LangChain 官方文档：Deep Agents Backends、LangGraph Persistence</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DeepSeek-Harness/" rel="tag"># DeepSeek Harness</a>
+              <a href="/tags/Agent/" rel="tag"># Agent</a>
+              <a href="/tags/Cordis/" rel="tag"># Cordis</a>
+              <a href="/tags/%E6%8F%92%E4%BB%B6%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag"># 插件化架构</a>
+              <a href="/tags/%E4%BA%8B%E4%BB%B6%E6%BA%AF%E6%BA%90/" rel="tag"># 事件溯源</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/10/21/ai-native-software-maintenance-deepseek-harness/" rel="prev" title="从 DeepSeek Harness 看 AI Native 软件的长期维护">
+                  <i class="fa fa-angle-left"></i> 从 DeepSeek Harness 看 AI Native 软件的长期维护
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Ayxm</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Ayxm1412/Ayxm1412.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

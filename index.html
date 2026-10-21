@@ -170,18 +170,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -269,6 +269,191 @@
 </ul>
 <p>感谢访问，欢迎常来。</p>
 
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ayxm1412.github.io/2026/10/21/deepseek-harness-cordis-architecture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/Ayxm1412.png">
+      <meta itemprop="name" content="Ayxm">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ayxm的博客">
+      <meta itemprop="description" content="Ayxm 的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Ayxm的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/21/deepseek-harness-cordis-architecture/" class="post-title-link" itemprop="url">DeepSeek Harness / Cordis 架构解析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-10-21 22:19:00 / 修改时间：23:09:46" itemprop="dateCreated datePublished" datetime="2026-10-21T22:19:00+08:00">2026-10-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="0-核心结论"><a href="#0-核心结论" class="headerlink" title="0. 核心结论"></a>0. 核心结论</h2><ol>
+<li><strong>一切皆插件</strong>：模型适配、工具、会话、沙箱，连 agent loop 本身，都是挂在同一个 <code>ctx</code> 上的插件；没有特权内核，均可从配置替换。</li>
+<li><strong>Cordis 是微内核</strong>：内核只做四件事——服务解析、注册、事件 IPC、生命周期。插件&#x3D;镜像，Fiber&#x3D;进程，注册&#x3D;可逆 effect，事件&#x3D;IPC，能力接口&#x3D;可热插拔的驱动（seam）。</li>
+<li><strong>Session Log 是一等公民</strong>：整段对话是一条 append-only 的事件日志（event sourcing），是唯一事实源；模型看到的 Surface、人看的 Transcript、todo&#x2F;goal 状态，都是从这条 log 派生的读模型。压缩只改投影，不改 log。</li>
+<li><strong>Capability Seam &#x3D; 稳定契约 + 可替换实现 + 明确消费者</strong>：更换 provider（本地↔沙箱↔远程）时，消费者代码无需修改。</li>
+<li><strong>代价</strong>：概念层叠、复杂度不消失只是转移、单进程不构成安全沙箱、provider 契约依赖约定而非强制。它面向”复杂、动态、可自进化”的 Agent 场景，并非通用解。</li>
+<li><strong>运行模型</strong>：单进程 + 单 JS 线程；多会话是 async&#x2F;await 协程，在一个事件循环上交替（并发而非并行），真并行仅出现在模型请求与子进程；共享 JS 状态无需加锁，多会话修改同一文件依赖版本乐观锁（<code>FS_STALE_VERSION</code>）。</li>
+<li><strong>搜推 harness 与通用 harness 不同</strong>：通用 harness 面向”开放式、低 QPS、长程、模型驱动”优化，搜推面向”闭形状、高 QPS、短程、时延敏感、pipeline 驱动”优化。做法是借鉴 DSH 的 seam &#x2F; 双轨 &#x2F; 配置分层，不采用微内核热插拔与热路径上的模型循环（详见第 13 节）。</li>
+</ol>
+<p>以下各节均从待解决的问题出发。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/21/deepseek-harness-cordis-architecture/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://ayxm1412.github.io/2026/10/21/ai-native-software-maintenance-deepseek-harness/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://github.com/Ayxm1412.png">
+      <meta itemprop="name" content="Ayxm">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ayxm的博客">
+      <meta itemprop="description" content="Ayxm 的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Ayxm的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/10/21/ai-native-software-maintenance-deepseek-harness/" class="post-title-link" itemprop="url">从 DeepSeek Harness 看 AI Native 软件的长期维护</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-10-21 21:40:00 / 修改时间：23:11:40" itemprop="dateCreated datePublished" datetime="2026-10-21T21:40:00+08:00">2026-10-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>最近，日常研发中的大部分实现已经交给了 Agent，也写了不少用完即弃的“日抛代码”。我尝试过 Spec 驱动开发，希望把需求和实现管得更清楚。但代码越积越多，遇到问题时，还是经常只能再向 Agent 求助。</p>
+<p>相比亲手写的代码，这些产出少了一些掌控感。新需求来了，或者出了 Bug，又回到“描述愿望，等待结果”的循环。<strong>Agent 能把代码写出来，但怎样才能让它成为团队真正理解、能够持续维护的软件？</strong></p>
+<p>《AI Native 研发范式实践手册》也记录了类似的“消化障碍”：团队并行使用多个 Agent，产出变多了，沟通方案时却未必能讲清设计，还得重新问 Agent。[1] 个人产能提高，并不等于团队的理解、评审和接手能力同步提高。</p>
+<p>正巧最近读了 DeepSeek Harness 的部分源码。它以 Cordis 插件组织模型请求、工具执行和会话记录，仓库还维护着开发约定、文档检查、回放测试和设计说明。这些不直接实现功能的文件，提供了一个观察软件长期维护的窗口。</p>
+<p>下面从问题定义、架构、文档和验证几个方面展开，再讨论开发进一步提速后，工具和工程师的工作可能怎样变化。文章结合个人实践与源码观察，由 Agent 协助润色。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/10/21/ai-native-software-maintenance-deepseek-harness/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

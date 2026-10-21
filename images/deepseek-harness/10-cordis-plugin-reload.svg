@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d6-reload-title d6-reload-desc" id="d-10-cordis-plugin-reload-root">
+      <title id="d6-reload-title">插件热插拔级联</title>
+      <desc id="d6-reload-desc">时序图：配置或模块变更后，provider 先卸载（逆序跑 disposer）再以新 uid 重新 provide；内核 notify 依赖它的 consumer，consumer 的 epoch 变化触发它自动 UNLOAD 再 RELOAD，无需手工编排，这就是依赖驱动的反应式级联热重载。</desc>
+      <defs>
+      <style>#d-10-cordis-plugin-reload-root { --paper: #f5f7fb; --ink: #2c3a55; --muted: #5b6d8c; --soft: #5b6d8c;
+    --accent: #be4a22; --accent-tint: rgba(190,74,34,0.08); --rule: rgba(44,58,85,0.14);
+    --sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', Menlo, Consolas, monospace; }
+      #d-10-cordis-plugin-reload-root { font-family: var(--sans); color: var(--ink); }
+      #d-10-cordis-plugin-reload-root .diagram-container { width: 100%; overflow-x: auto; }
+      #d-10-cordis-plugin-reload-root .diagram-container { overflow-x: visible; }</style>
+        <marker id="d-10-cordis-plugin-reload-d6-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6d8c"/></marker>
+        <marker id="d-10-cordis-plugin-reload-d6-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#be4a22"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#f5f7fb"/>
+
+      <!-- lifelines -->
+      <line x1="120" y1="100" x2="120" y2="500" stroke="#2c3a55" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.20"/>
+      <line x1="340" y1="100" x2="340" y2="500" stroke="#2c3a55" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.20"/>
+      <line x1="560" y1="100" x2="560" y2="500" stroke="#2c3a55" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.20"/>
+      <line x1="760" y1="100" x2="760" y2="500" stroke="#2c3a55" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.20"/>
+
+      <!-- messages -->
+      <line x1="120" y1="148" x2="340" y2="148" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow)"/>
+      <line x1="340" y1="192" x2="560" y2="192" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow)"/>
+      <path d="M560,220 L596,220 L596,252 L560,252" fill="none" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow)"/>
+      <line x1="560" y1="296" x2="340" y2="296" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow)"/>
+      <line x1="340" y1="340" x2="760" y2="340" stroke="#be4a22" stroke-width="1.4" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow-accent)"/>
+      <path d="M760,368 L796,368 L796,400 L760,400" fill="none" stroke="#be4a22" stroke-width="1.4" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow-accent)"/>
+      <path d="M760,428 L796,428 L796,460 L760,460" fill="none" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-10-cordis-plugin-reload-d6-arrow)"/>
+
+      <!-- message labels -->
+      <rect x="186" y="126" width="88" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="230" y="138" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">文件/配置变更</text>
+      <rect x="412" y="174" width="76" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="450" y="183" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">update(config)</text>
+      <rect x="600" y="228" width="124" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="606" y="240" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c">卸载：逆序 disposer</text>
+      <rect x="408" y="278" width="84" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="450" y="287" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">provide(S) uid+1</text>
+      <rect x="610" y="322" width="100" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="660" y="331" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#be4a22" text-anchor="middle" letter-spacing="0.06em">notify(S)·_refresh</text>
+      <rect x="800" y="376" width="88" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="804" y="388" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#be4a22">epoch 变→卸载</text>
+      <rect x="800" y="436" width="100" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="804" y="448" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c">重载：重跑 setup</text>
+
+      <!-- actor boxes -->
+      <rect x="45" y="48" width="150" height="52" rx="6" fill="#f5f7fb"/>
+      <rect x="45" y="48" width="150" height="52" rx="6" fill="#5b6d8c" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.10"/>
+      <text x="120" y="70" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">HMR / 配置</text>
+      <text x="120" y="88" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ctx.hmr</text>
+
+      <rect x="265" y="48" width="150" height="52" rx="6" fill="#f5f7fb"/>
+      <rect x="265" y="48" width="150" height="52" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="340" y="70" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">Cordis 内核</text>
+      <text x="340" y="88" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">registry·reflect</text>
+
+      <rect x="485" y="48" width="150" height="52" rx="6" fill="#f5f7fb"/>
+      <rect x="485" y="48" width="150" height="52" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="560" y="70" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">Provider</text>
+      <text x="560" y="88" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">llm-deepseek</text>
+
+      <rect x="685" y="48" width="150" height="52" rx="6" fill="#f5f7fb"/>
+      <rect x="685" y="48" width="150" height="52" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="760" y="70" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">Consumer</text>
+      <text x="760" y="88" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">injects the seam</text>
+
+      <!-- legend -->
+      <line x1="40" y1="528" x2="920" y2="528" stroke="#2c3a55" stroke-width="0.8" stroke-opacity="0.14"/>
+      <text x="40" y="552" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">provider 换新 uid → 内核 notify → consumer 的 epoch 变 → 自动卸载再重载：依赖驱动的级联热重载（论文的“空间可组合性”）。</text>
+    </svg>

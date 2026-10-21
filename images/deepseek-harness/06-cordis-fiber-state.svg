@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d2-fiber-state-title d2-fiber-state-desc" id="d-06-cordis-fiber-state-root">
+      <title id="d2-fiber-state-title">Fiber 进程生命周期状态机</title>
+      <desc id="d2-fiber-state-desc">Cordis 插件运行实例 Fiber 的六个状态与转移：等待依赖、加载、运行、失败、卸载、回收，并标出依赖恢复时的热重载回路与卸载时逆序释放资源，对应操作系统的进程状态图。</desc>
+      <defs>
+      <style>#d-06-cordis-fiber-state-root { --paper: #f5f7fb; --ink: #2c3a55; --muted: #5b6d8c; --soft: #5b6d8c;
+    --accent: #be4a22; --accent-tint: rgba(190,74,34,0.08); --rule: rgba(44,58,85,0.14);
+    --sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', Menlo, Consolas, monospace; }
+      #d-06-cordis-fiber-state-root .dd-page { font-family: var(--sans); background: var(--paper); color: var(--ink); padding: 2rem 1.5rem; }
+      #d-06-cordis-fiber-state-root .diagram-container { width: 100%; overflow-x: auto; }
+      #d-06-cordis-fiber-state-root .diagram-container { overflow-x: visible; }</style>
+        <marker id="d-06-cordis-fiber-state-d2-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6d8c"/></marker>
+        <marker id="d-06-cordis-fiber-state-d2-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#be4a22"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#f5f7fb"/>
+
+      <!-- annotation: 资源释放 -->
+      <text x="100" y="80" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-style="italic" fill="#5b6d8c">资源释放：卸载时逆序跑 disposer，</text>
+      <text x="100" y="100" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-style="italic" fill="#5b6d8c">await 异步清理 —— 似 defer / 析构。</text>
+
+      <!-- transitions (drawn before nodes) -->
+      <line x1="62" y1="185" x2="100" y2="185" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="230" y1="185" x2="330" y2="185" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="460" y1="185" x2="560" y2="185" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="395" y1="230" x2="395" y2="330" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="625" y1="230" x2="625" y2="330" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <!-- reload loop (accent): UNLOADING -> LOADING -->
+      <path d="M560,375 H513 Q505,375 505,367 V258 Q505,250 497,250 H438 Q430,250 430,242 V230" fill="none" stroke="#be4a22" stroke-width="1.4" marker-end="url(#d-06-cordis-fiber-state-d2-arrow-accent)"/>
+      <!-- FAILED -> UNLOADING -->
+      <path d="M395,420 V452 Q395,460 403,460 H617 Q625,460 625,452 V420" fill="none" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="690" y1="375" x2="780" y2="375" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+      <line x1="845" y1="420" x2="845" y2="468" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-06-cordis-fiber-state-d2-arrow)"/>
+
+      <!-- transition labels (Chinese -> 12px sans, 16px mask) -->
+      <rect x="256" y="165" width="48" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="280" y="177" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">依赖就绪</text>
+      <rect x="486" y="165" width="48" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="510" y="177" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">回调完成</text>
+      <rect x="405" y="272" width="24" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="417" y="284" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">抛错</text>
+      <rect x="635" y="272" width="48" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="659" y="284" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">依赖变更</text>
+      <rect x="441" y="294" width="48" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="465" y="306" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#be4a22" text-anchor="middle">依赖恢复</text>
+      <rect x="486" y="466" width="24" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="498" y="478" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">卸载</text>
+      <rect x="711" y="349" width="48" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="735" y="361" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">清理完成</text>
+
+      <!-- start dot -->
+      <circle cx="56" cy="185" r="6" fill="#2c3a55"/>
+
+      <!-- PENDING -->
+      <rect x="100" y="140" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="100" y="140" width="130" height="90" rx="8" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="165" y="182" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">等待依赖</text>
+      <text x="165" y="202" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">PENDING</text>
+
+      <!-- LOADING -->
+      <rect x="330" y="140" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="330" y="140" width="130" height="90" rx="8" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="395" y="182" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">加载中</text>
+      <text x="395" y="202" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">LOADING</text>
+
+      <!-- ACTIVE (focal) -->
+      <rect x="560" y="140" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="560" y="140" width="130" height="90" rx="8" fill="#be4a22" stroke="#be4a22" stroke-width="1" fill-opacity="0.08"/>
+      <text x="625" y="182" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">运行中</text>
+      <text x="625" y="202" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ACTIVE</text>
+
+      <!-- FAILED -->
+      <rect x="330" y="330" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="330" y="330" width="130" height="90" rx="8" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="395" y="372" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">已失败</text>
+      <text x="395" y="392" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">FAILED</text>
+
+      <!-- UNLOADING -->
+      <rect x="560" y="330" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="560" y="330" width="130" height="90" rx="8" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="625" y="372" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">卸载中</text>
+      <text x="625" y="392" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">UNLOADING</text>
+
+      <!-- DISPOSED -->
+      <rect x="780" y="330" width="130" height="90" rx="8" fill="#f5f7fb"/>
+      <rect x="780" y="330" width="130" height="90" rx="8" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="845" y="372" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">已回收</text>
+      <text x="845" y="392" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">DISPOSED</text>
+
+      <!-- end ring -->
+      <circle cx="845" cy="476" r="8" fill="none" stroke="#2c3a55" stroke-width="1"/>
+      <circle cx="845" cy="476" r="5" fill="#2c3a55"/>
+
+      <!-- legend strip: OS mapping -->
+      <line x1="40" y1="520" x2="920" y2="520" stroke="#2c3a55" stroke-width="0.8" stroke-opacity="0.14"/>
+      <text x="40" y="544" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#5b6d8c">对照 OS 进程状态</text>
+      <text x="40" y="568" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">阻塞→PENDING · 创建→LOADING · 运行→ACTIVE · 崩溃→FAILED · 退出→UNLOADING · 终止→DISPOSED</text>
+    </svg>

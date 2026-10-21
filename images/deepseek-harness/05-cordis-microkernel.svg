@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d1-microkernel-title d1-microkernel-desc" id="d-05-cordis-microkernel-root">
+      <title id="d1-microkernel-title">Cordis 微内核全景</title>
+      <desc id="d1-microkernel-desc">用户态的插件（每个是一个 Fiber 进程）通过 provide 导出服务、inject 声明依赖、events 通信，三种调用都穿过边界进入只做服务解析、注册、事件总线和生命周期的薄内核；连 agent loop 本身也是可替换的插件。</desc>
+      <defs>
+      <style>#d-05-cordis-microkernel-root { --paper: #f5f7fb; --ink: #2c3a55; --muted: #5b6d8c; --soft: #5b6d8c;
+    --accent: #be4a22; --accent-tint: rgba(190,74,34,0.08); --rule: rgba(44,58,85,0.14);
+    --sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', Menlo, Consolas, monospace; }
+      #d-05-cordis-microkernel-root .dd-page { font-family: var(--sans); background: var(--paper); color: var(--ink); padding: 2rem 1.5rem; }
+      #d-05-cordis-microkernel-root .diagram-container { width: 100%; overflow-x: auto; }
+      #d-05-cordis-microkernel-root .diagram-container { overflow-x: visible; }</style>
+        <marker id="d-05-cordis-microkernel-d1-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6d8c"/></marker>
+        <marker id="d-05-cordis-microkernel-d1-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#be4a22"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#f5f7fb"/>
+
+      <!-- zones (painted first) -->
+      <rect x="60" y="64" width="840" height="170" rx="8" fill="#2c3a55" stroke="#2c3a55" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.14"/>
+      <rect x="72" y="68" width="224" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="80" y="80" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c">用户态 · 每个插件 = 一个 Fiber 进程</text>
+
+      <rect x="60" y="320" width="840" height="170" rx="8" fill="#2c3a55" stroke="#2c3a55" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.14"/>
+      <rect x="72" y="324" width="192" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="80" y="336" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c">Cordis 微内核 · 只做四件事</text>
+
+      <!-- arrows: syscalls crossing the kernel boundary (drawn before nodes) -->
+      <line x1="204" y1="200" x2="204" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-05-cordis-microkernel-d1-arrow)"/>
+      <line x1="480" y1="200" x2="480" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-05-cordis-microkernel-d1-arrow)"/>
+      <line x1="756" y1="200" x2="756" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-05-cordis-microkernel-d1-arrow)"/>
+
+      <!-- arrow labels (Latin API names -> mono 8px) -->
+      <rect x="212" y="270" width="40" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="232" y="279" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">provide</text>
+      <rect x="488" y="270" width="40" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="508" y="279" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">inject</text>
+      <rect x="764" y="270" width="40" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="784" y="279" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">events</text>
+
+      <!-- user-space fibers -->
+      <rect x="100" y="110" width="208" height="90" rx="6" fill="#f5f7fb"/>
+      <rect x="100" y="110" width="208" height="90" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="204" y="152" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">LLM 适配器</text>
+      <text x="204" y="172" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ctx.llm</text>
+
+      <rect x="376" y="110" width="208" height="90" rx="6" fill="#f5f7fb"/>
+      <rect x="376" y="110" width="208" height="90" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="480" y="152" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">工具注册表</text>
+      <text x="480" y="172" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ctx.tools</text>
+
+      <rect x="652" y="110" width="208" height="90" rx="6" fill="#f5f7fb"/>
+      <rect x="652" y="110" width="208" height="90" rx="6" fill="#be4a22" stroke="#be4a22" stroke-width="1" fill-opacity="0.08"/>
+      <text x="756" y="152" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">Agent Loop</text>
+      <text x="756" y="172" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ctx.agentLoop</text>
+
+      <!-- kernel services -->
+      <rect x="96" y="370" width="168" height="80" rx="6" fill="#f5f7fb"/>
+      <rect x="96" y="370" width="168" height="80" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="180" y="406" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">服务解析</text>
+      <text x="180" y="426" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">Reflect</text>
+
+      <rect x="304" y="370" width="168" height="80" rx="6" fill="#f5f7fb"/>
+      <rect x="304" y="370" width="168" height="80" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="388" y="406" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">插件注册</text>
+      <text x="388" y="426" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">Registry</text>
+
+      <rect x="512" y="370" width="168" height="80" rx="6" fill="#f5f7fb"/>
+      <rect x="512" y="370" width="168" height="80" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="596" y="406" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">事件总线</text>
+      <text x="596" y="426" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">Events</text>
+
+      <rect x="720" y="370" width="168" height="80" rx="6" fill="#f5f7fb"/>
+      <rect x="720" y="370" width="168" height="80" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="804" y="406" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">生命周期</text>
+      <text x="804" y="426" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">Fiber</text>
+
+      <!-- legend strip -->
+      <line x1="40" y1="520" x2="920" y2="520" stroke="#2c3a55" stroke-width="0.8" stroke-opacity="0.14"/>
+      <text x="40" y="544" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">没有特权内核 —— 连 agent loop 也是插件，可从 cordis.yml 替换；内核只负责：服务解析 · 注册 · IPC · 生命周期。</text>
+    </svg>

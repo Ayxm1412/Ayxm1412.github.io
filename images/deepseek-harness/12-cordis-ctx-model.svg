@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d8-ctx-title d8-ctx-desc" id="d-12-cordis-ctx-model-root">
+      <title id="d8-ctx-title">ctx 的空间模型</title>
+      <desc id="d8-ctx-desc">每个插件有自己的子 ctx（原型继承自 root），root 里全局共享两样东西：服务登记册和事件总线。插件 provide 把服务写进登记册，读 ctx.xxx 时经 Proxy 门卫去登记册解析，emit/on 走全局总线。</desc>
+      <defs>
+      <style>#d-12-cordis-ctx-model-root { --paper: #f5f7fb; --ink: #2c3a55; --muted: #5b6d8c; --soft: #5b6d8c;
+    --accent: #be4a22; --accent-tint: rgba(190,74,34,0.08); --rule: rgba(44,58,85,0.14);
+    --sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', Menlo, Consolas, monospace; }
+      #d-12-cordis-ctx-model-root { font-family: var(--sans); color: var(--ink); }
+      #d-12-cordis-ctx-model-root .diagram-container { width: 100%; overflow-x: auto; }
+      #d-12-cordis-ctx-model-root .diagram-container { overflow-x: visible; }</style>
+        <marker id="d-12-cordis-ctx-model-d8-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6d8c"/></marker>
+        <marker id="d-12-cordis-ctx-model-d8-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#be4a22"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#f5f7fb"/>
+
+      <!-- root zone -->
+      <rect x="88" y="296" width="784" height="180" rx="8" fill="#2c3a55" stroke="#2c3a55" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.14"/>
+      <rect x="100" y="300" width="176" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="108" y="312" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c">root ctx（前台）· 全局共享</text>
+
+      <!-- arrows (before nodes) -->
+      <line x1="232" y1="164" x2="232" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-12-cordis-ctx-model-d8-arrow)"/>
+      <line x1="320" y1="390" x2="396" y2="390" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-12-cordis-ctx-model-d8-arrow)"/>
+      <line x1="484" y1="164" x2="484" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-12-cordis-ctx-model-d8-arrow)"/>
+      <line x1="736" y1="164" x2="736" y2="352" stroke="#5b6d8c" stroke-width="1.2" marker-end="url(#d-12-cordis-ctx-model-d8-arrow)"/>
+
+      <!-- arrow labels -->
+      <rect x="240" y="232" width="76" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="278" y="244" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">读 ctx.llm</text>
+      <rect x="330" y="366" width="52" height="16" rx="2" fill="#f5f7fb"/>
+      <text x="356" y="378" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="500" fill="#5b6d8c" text-anchor="middle">查到实现</text>
+      <rect x="492" y="232" width="52" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="518" y="241" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">provide</text>
+      <rect x="744" y="232" width="56" height="12" rx="2" fill="#f5f7fb"/>
+      <text x="772" y="241" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="8" fill="#5b6d8c" text-anchor="middle" letter-spacing="0.06em">emit / on</text>
+
+      <!-- plugin rooms (child ctx) -->
+      <rect x="132" y="88" width="200" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="132" y="88" width="200" height="76" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="232" y="122" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">插件 A（消费者）</text>
+      <text x="232" y="142" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">inject ['llm']</text>
+
+      <rect x="384" y="88" width="200" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="384" y="88" width="200" height="76" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="484" y="122" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">插件 B（提供者）</text>
+      <text x="484" y="142" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">provide('llm')</text>
+
+      <rect x="636" y="88" width="200" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="636" y="88" width="200" height="76" rx="6" fill="#ffffff" stroke="#2c3a55" stroke-width="1"/>
+      <text x="736" y="122" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">插件 C</text>
+      <text x="736" y="142" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">emit / on</text>
+
+      <!-- root internals -->
+      <rect x="144" y="352" width="176" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="144" y="352" width="176" height="76" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="232" y="386" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">Proxy 门卫</text>
+      <text x="232" y="406" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">reflect.handler</text>
+
+      <rect x="396" y="352" width="176" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="396" y="352" width="176" height="76" rx="6" fill="#be4a22" stroke="#be4a22" stroke-width="1.2" fill-opacity="0.08"/>
+      <text x="484" y="386" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">服务登记册</text>
+      <text x="484" y="406" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">reflect.store</text>
+
+      <rect x="648" y="352" width="176" height="76" rx="6" fill="#f5f7fb"/>
+      <rect x="648" y="352" width="176" height="76" rx="6" fill="#2c3a55" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.05"/>
+      <text x="736" y="386" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">事件总线</text>
+      <text x="736" y="406" font-family="'SF Mono',Menlo,Consolas,monospace" font-size="9" fill="#5b6d8c" text-anchor="middle">ctx.events</text>
+
+      <!-- legend -->
+      <line x1="40" y1="512" x2="920" y2="512" stroke="#2c3a55" stroke-width="0.8" stroke-opacity="0.14"/>
+      <text x="40" y="536" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">每个插件 ctx 是 root 的子房间（原型继承）；provide 往登记册写，读 ctx.xxx 经门卫去登记册解析，emit/on 走全局总线。登记册与总线全局唯一。</text>
+    </svg>

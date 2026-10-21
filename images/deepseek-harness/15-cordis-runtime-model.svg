@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d9-runtime-title d9-runtime-desc" id="d-13-cordis-runtime-model-root">
+      <title id="d9-runtime-title">单线程 + 多会话协程运行模型</title>
+      <desc id="d9-runtime-desc">时间轴上，JS 主线程这一道里会话 A 和会话 B 的执行块首尾交替、从不重叠，块之间的空隙是 await 让出；下方外部 I/O 与子进程这一道里，模型请求 A、模型请求 B 和 bash 子进程的时长条在时间上相互重叠，说明等待和子进程是真正并行的。</desc>
+      <defs>
+      <style>#d-13-cordis-runtime-model-root { --paper: #f5f7fb; --ink: #2c3a55; --muted: #5b6d8c; --soft: #5b6d8c;
+    --accent: #be4a22; --accent-tint: rgba(190,74,34,0.08); --rule: rgba(44,58,85,0.14);
+    --sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', Menlo, Consolas, monospace; }
+      #d-13-cordis-runtime-model-root { font-family: var(--sans); color: var(--ink); }
+      #d-13-cordis-runtime-model-root .diagram-container { width: 100%; overflow-x: auto; }
+      #d-13-cordis-runtime-model-root .diagram-container { overflow-x: visible; }</style>
+        <marker id="d-13-cordis-runtime-model-d9-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5b6d8c"/></marker>
+      </defs>
+      <rect width="100%" height="100%" fill="#f5f7fb"/>
+
+      <!-- time axis -->
+      <line x1="200" y1="76" x2="904" y2="76" stroke="#5b6d8c" stroke-width="1" marker-end="url(#d-13-cordis-runtime-model-d9-arrow)"/>
+      <text x="852" y="66" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#5b6d8c">时间 →</text>
+
+      <!-- lane zones -->
+      <rect x="200" y="96" width="712" height="76" rx="8" fill="#2c3a55" stroke="#2c3a55" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.14"/>
+      <rect x="200" y="200" width="712" height="180" rx="8" fill="#2c3a55" stroke="#2c3a55" stroke-width="0.8" fill-opacity="0.02" stroke-opacity="0.14"/>
+
+      <!-- lane labels -->
+      <text x="24" y="126" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55">JS 主线程</text>
+      <text x="24" y="146" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#5b6d8c">单线程 · 串行</text>
+      <text x="24" y="282" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55">外部 I/O · 子进程</text>
+      <text x="24" y="302" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#5b6d8c">真并行</text>
+
+      <!-- lane 1: JS thread blocks (serial, interleaved) -->
+      <rect x="208" y="116" width="96" height="36" rx="4" fill="#5b6d8c" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.15"/>
+      <text x="256" y="139" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">会话 A</text>
+      <rect x="328" y="116" width="96" height="36" rx="4" fill="#ffffff" stroke="#5b6d8c" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="376" y="139" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">会话 B</text>
+      <rect x="448" y="116" width="96" height="36" rx="4" fill="#5b6d8c" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.15"/>
+      <text x="496" y="139" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">会话 A</text>
+      <rect x="568" y="116" width="96" height="36" rx="4" fill="#ffffff" stroke="#5b6d8c" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="616" y="139" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55" text-anchor="middle">会话 B</text>
+
+      <!-- lane 2: external I/O + subprocess (parallel, overlapping in time) -->
+      <rect x="304" y="216" width="272" height="32" rx="4" fill="#5b6d8c" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.15"/>
+      <text x="314" y="237" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55">模型请求 A（网络等待）</text>
+      <rect x="424" y="264" width="272" height="32" rx="4" fill="#5b6d8c" stroke="#5b6d8c" stroke-width="1" fill-opacity="0.15"/>
+      <text x="434" y="285" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55">模型请求 B（网络等待）</text>
+      <rect x="544" y="312" width="248" height="32" rx="4" fill="#be4a22" stroke="#be4a22" stroke-width="1" fill-opacity="0.08"/>
+      <text x="554" y="333" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" font-weight="600" fill="#2c3a55">bash 子进程（真 OS 进程）</text>
+
+      <!-- legend -->
+      <line x1="40" y1="404" x2="920" y2="404" stroke="#2c3a55" stroke-width="0.8" stroke-opacity="0.14"/>
+      <text x="40" y="428" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">实心块 = 会话 A，描边块 = 会话 B：JS 线程上任一时刻只跑一个块（串行、不重叠）。</text>
+      <text x="40" y="452" font-family="'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif" font-size="12" fill="#2c3a55">块之间的空隙 = await 让出；此时下方的模型请求 / 子进程在别处真并行 —— 多会话就这样「同时」推进。</text>
+    </svg>
